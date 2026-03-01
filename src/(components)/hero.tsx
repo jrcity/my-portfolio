@@ -7,7 +7,7 @@ import SocialLinks from './ui/social-links'
 
 export default function Hero() {
   const [displayText, setDisplayText] = useState('')
-  const words = ['Developer', 'Designer', 'Creator', 'Innovator']
+  const words = ['Architect', 'System Designer', 'Senior Engineer', 'CTO Mindset']
   const [wordIndex, setWordIndex] = useState(0)
   const [isDeleting, setIsDeleting] = useState(false)
 
@@ -47,7 +47,7 @@ export default function Hero() {
             transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
           >
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold">
-              <span className="text-gradient">Full Stack</span>
+              <span className="text-gradient">Senior Fullstack</span>
               <br />
               <span className="border-r-2 border-purple-500 pr-2">
                 {displayText}
@@ -61,8 +61,8 @@ export default function Hero() {
             transition={{ delay: 0.5, duration: 0.8 }}
             className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto"
           >
-            Crafting exceptional digital experiences with cutting-edge technology. 
-            Passionate about creating scalable, beautiful, and user-centered applications.
+            Designing and shipping production-grade backend systems and cross-platform applications. 
+            I bridge the gap between complex business logic and scalable, maintainable architecture.
           </motion.p>
 
           <motion.div
@@ -74,7 +74,7 @@ export default function Hero() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="group bg-gradient-to-r from-purple-500 to-blue-500 text-white px-8 py-4 rounded-xl font-semibold text-lg flex items-center gap-2"
+              className="group btn-primary px-8 py-4 rounded-xl font-semibold text-lg flex items-center gap-2"
             >
               View My Work
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -83,7 +83,7 @@ export default function Hero() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="glass-effect px-8 py-4 rounded-xl font-semibold text-lg flex items-center gap-2"
+              className="btn-outline px-8 py-4 rounded-xl font-semibold text-lg flex items-center gap-2"
             >
               <Download className="w-5 h-5" />
               Download CV

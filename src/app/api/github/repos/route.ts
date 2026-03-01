@@ -35,7 +35,7 @@ interface ErrorResponse {
 
 export async function GET(req: NextRequest): Promise<NextResponse<SuccessResponse | ErrorResponse>> {
   const token = process.env.GITHUB_TOKEN;
-  const username = process.env.NEXT_PUBLIC_GITHUB_USERNAME;
+  const username = process.env.NEXT_PUBLIC_GITHUB_USERNAME || 'jrcity';
 
   console.log('🔧 API Route - GitHub Repos:');
   console.log('  - Token available:', !!token);
@@ -52,16 +52,7 @@ export async function GET(req: NextRequest): Promise<NextResponse<SuccessRespons
     );
   }
 
-  if (!username) {
-    console.error('❌ No GitHub username found in environment variables');
-    return NextResponse.json<ErrorResponse>(
-      {
-        error: 'GitHub username not configured',
-        message: 'NEXT_PUBLIC_GITHUB_USERNAME environment variable is missing',
-      },
-      { status: 500 }
-    );
-  }
+  // We no longer need to error if username is missing since we default to 'jrcity'
 
   // Extract query parameters
   const { searchParams } = new URL(req.url);

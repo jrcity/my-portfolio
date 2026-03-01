@@ -9,7 +9,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 // Define the base URL for your site
 const baseUrl = process.env.NODE_ENV === 'production' 
-  ? 'https://crakton.github.io/my-portfolio' 
+  ? 'https://jrcity.github.io/my-portfolio' 
   : 'http://localhost:3000'
 
 export const metadata: Metadata = {
@@ -75,7 +75,7 @@ export const metadata: Metadata = {
   authors: [
     { 
       name: 'Redemption Jonathan',
-      url: 'https://github.com/crakton'
+      url: 'https://github.com/jrcity'
     }
   ],
   creator: 'Redemption Jonathan',
@@ -186,12 +186,12 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "Person",
               "name": "Redemption Jonathan",
-              "alternateName": "crakton",
+              "alternateName": "jrcity",
               "jobTitle": "Full Stack Developer",
               "description": "Passionate full-stack developer and software engineer specializing in React, Next.js, TypeScript, Node.js, and mobile development.",
               "url": baseUrl,
               "sameAs": [
-                "https://github.com/crakton",
+                "https://github.com/jrcity",
                 "https://linkedin.com/in/your-linkedin", // Replace with your LinkedIn
                 "https://twitter.com/your-twitter", // Replace with your Twitter
               ],

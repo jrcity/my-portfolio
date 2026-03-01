@@ -1,8 +1,8 @@
 import { MetadataRoute } from 'next'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NODE_ENV === 'production' 
-    ? 'https://crakton.github.io/my-portfolio' 
+  const baseUrl = process.env.NODE_ENV === 'production'
+    ? 'https://jrcity.github.io/my-portfolio'
     : 'http://localhost:3000'
 
   return [

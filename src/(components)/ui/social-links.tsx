@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { Github, Linkedin, Twitter, Mail } from 'lucide-react'
 
 const socialLinks = [
-  { icon: Github, href: 'https://github.com/crakton', label: 'GitHub' },
+  { icon: Github, href: 'https://github.com/jrcity', label: 'GitHub' },
   { icon: Linkedin, href: 'https://linkedin.com/in/redemption', label: 'LinkedIn' },
   { icon: Twitter, href: 'https://twitter.com/_crakton', label: 'Twitter' },
   { icon: Mail, href: 'mailto:redemptionjonathan1@gmail.com', label: 'Email' },

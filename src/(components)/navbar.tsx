@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Menu, X, Sun, Moon } from 'lucide-react'
 import { useTheme } from 'next-themes'
+import Image from 'next/image'
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
@@ -22,6 +23,7 @@ export default function Navbar() {
     { href: '#home', label: 'Home' },
     { href: '#about', label: 'About' },
     { href: '#projects', label: 'Projects' },
+    { href: '#sandbox', label: 'Sandbox' },
     { href: '#contact', label: 'Contact' },
   ]
 
@@ -29,9 +31,8 @@ export default function Navbar() {
     <motion.nav
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        scrolled ? 'glass-effect' : 'bg-transparent'
-      }`}
+      className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'glass-effect' : 'bg-transparent'
+        }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
@@ -41,9 +42,8 @@ export default function Navbar() {
             className="flex items-center space-x-2"
           >
             <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">P</span>
+              <Image src="/brand-logo.png" alt="Logo" width={32} height={32} />
             </div>
-            <span className="text-xl font-bold text-gradient">Portfolio</span>
           </motion.div>
 
           {/* Desktop Navigation */}

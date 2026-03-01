@@ -9,9 +9,16 @@ export interface Project {
   demo?: string | null
   tags: string[]
   featured?: boolean
-    stats?: {
+  stats?: {
     stars?: number
     forks?: number
     lastUpdated?: string
+  }
+  architecture?: {
+    diagram?: string // Optional diagram image path
+    systemDesign: string // Description of the architectural approach
+    storageStrategy: string // Rationale for DB choice and modeling
+    authStrategy: string // JWT, OAuth, RBAC etc
+    scalability: string // How it scales (Redis, Queues etc)
   }
 }

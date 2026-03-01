@@ -11,20 +11,30 @@ import { useGithubRepos } from '@/hooks/use-github-repos'
 export default function Projects() {
   const [filter, setFilter] = useState('all')
   const [displayedProjects, setDisplayedProjects] = useState<Project[]>([])
-  const [showAll, setShowAll] = useState(false)
-  const { repos: githubRepos, isLoading, isError, errorMessage, meta } = useGithubRepos(20)
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 6
+  const { repos: githubRepos, isLoading, isError, errorMessage, meta } = useGithubRepos(50) // Increased to 50 to get more repos for pagination
 
   // Safely combine GitHub repos with private projects
   const allProjects = [...(githubRepos || []), ...(privateProjects || [])]
 
-  useEffect(() => {
-    let filtered = allProjects
-    if (filter !== 'all') {
-      filtered = allProjects.filter(project => project.category === filter)
-    }
+  // Calculate filtered projects and total pages
+  const filteredProjects = filter === 'all' 
+    ? allProjects 
+    : allProjects.filter(project => project.category === filter)
     
-    setDisplayedProjects(showAll ? filtered : filtered.slice(0, 6))
-  }, [filter, showAll, githubRepos]) // Remove allProjects from dependency array to avoid infinite loop
+  const totalPages = Math.ceil(filteredProjects.length / itemsPerPage)
+
+  // Reset to page 1 when filter changes
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [filter])
+
+  useEffect(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage
+    const endIndex = startIndex + itemsPerPage
+    setDisplayedProjects(filteredProjects.slice(startIndex, endIndex))
+  }, [filter, currentPage, githubRepos]) // Remove allProjects from dependency array to avoid infinite loop
 
   // Debug logging
   useEffect(() => {
@@ -84,16 +94,15 @@ export default function Projects() {
         {displayedProjects.length > 0 ? (
           <motion.div
             initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
             className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12"
           >
             {displayedProjects.map((project, index) => (
               <motion.div
                 key={`${project.id}-${index}`} // More unique key
                 initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
               >
                 <ProjectCard project={project} />
@@ -106,17 +115,40 @@ export default function Projects() {
           </div>
         ) : null}
 
-        {/* Load More Button */}
-        {allProjects.length > 6 && (
-          <div className="text-center">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setShowAll(!showAll)}
-              className="glass-effect px-8 py-4 rounded-xl font-semibold hover:bg-purple-500/20 transition-all"
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center gap-4 mt-8">
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="px-4 py-2 rounded-lg bg-gray-800 text-gray-300 disabled:opacity-50 hover:bg-gray-700 transition-colors"
             >
-              {showAll ? 'Show Less' : `Load More Projects (${allProjects.length - 6} more)`}
-            </motion.button>
+              Previous
+            </button>
+            
+            <div className="flex gap-2">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={`w-10 h-10 rounded-lg font-medium transition-all ${
+                    currentPage === page 
+                      ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/25' 
+                      : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                  }`}
+                >
+                  {page}
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="px-4 py-2 rounded-lg bg-gray-800 text-gray-300 disabled:opacity-50 hover:bg-gray-700 transition-colors"
+            >
+              Next
+            </button>
           </div>
         )}
 
@@ -130,7 +162,7 @@ export default function Projects() {
                 <p>Private Projects: {privateProjects?.length || 0}</p>
                 <p>Rate Limit: {meta.rateLimit.remaining}/{meta.rateLimit.limit}</p>
                 <p>Filter: {filter}</p>
-                <p>Show All: {showAll.toString()}</p>
+                <p>Current Page: {currentPage}</p>
               </div>
             </details>
           </div>
