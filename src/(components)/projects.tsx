@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { privateProjects } from '@/constants/projects'
 import type { Project } from '@/types/project'
 import ProjectFilter from './project-filter'
@@ -16,13 +16,19 @@ export default function Projects() {
   const { repos: githubRepos, isLoading, isError, errorMessage, meta } = useGithubRepos(50) // Increased to 50 to get more repos for pagination
 
   // Safely combine GitHub repos with private projects
-  const allProjects = [...(githubRepos || []), ...(privateProjects || [])]
+  const allProjects = useMemo(
+    () => [...(githubRepos || []), ...(privateProjects || [])],
+    [githubRepos]
+  )
 
   // Calculate filtered projects and total pages
-  const filteredProjects = filter === 'all' 
-    ? allProjects 
-    : allProjects.filter(project => project.category === filter)
-    
+  const filteredProjects = useMemo(
+    () => filter === 'all'
+      ? allProjects
+      : allProjects.filter(project => project.category === filter),
+    [filter, allProjects]
+  )
+
   const totalPages = Math.ceil(filteredProjects.length / itemsPerPage)
 
   // Reset to page 1 when filter changes
@@ -34,19 +40,7 @@ export default function Projects() {
     const startIndex = (currentPage - 1) * itemsPerPage
     const endIndex = startIndex + itemsPerPage
     setDisplayedProjects(filteredProjects.slice(startIndex, endIndex))
-  }, [filter, currentPage, githubRepos]) // Remove allProjects from dependency array to avoid infinite loop
-
-  // Debug logging
-  useEffect(() => {
-    console.log('📊 Projects Component State:')
-    console.log('  - GitHub repos:', githubRepos?.length || 0)
-    console.log('  - Private projects:', privateProjects?.length || 0)
-    console.log('  - All projects:', allProjects.length)
-    console.log('  - Displayed projects:', displayedProjects.length)
-    console.log('  - Is loading:', isLoading)
-    console.log('  - Is error:', isError)
-    console.log('  - Error message:', errorMessage)
-  }, [githubRepos, displayedProjects, isLoading, isError, errorMessage])
+  }, [filteredProjects, currentPage])
 
   return (
     <section id="projects" className="py-20 gradient-bg">
@@ -125,17 +119,16 @@ export default function Projects() {
             >
               Previous
             </button>
-            
+
             <div className="flex gap-2">
               {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
                 <button
                   key={page}
                   onClick={() => setCurrentPage(page)}
-                  className={`w-10 h-10 rounded-lg font-medium transition-all ${
-                    currentPage === page 
-                      ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/25' 
+                  className={`w-10 h-10 rounded-lg font-medium transition-all ${currentPage === page
+                      ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/25'
                       : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-                  }`}
+                    }`}
                 >
                   {page}
                 </button>

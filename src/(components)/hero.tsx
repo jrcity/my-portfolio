@@ -7,11 +7,11 @@ import SocialLinks from './ui/social-links'
 
 export default function Hero() {
   const [displayText, setDisplayText] = useState('')
-  const words = ['Architect', 'System Designer', 'Senior Engineer', 'CTO Mindset']
   const [wordIndex, setWordIndex] = useState(0)
   const [isDeleting, setIsDeleting] = useState(false)
 
   useEffect(() => {
+    const words = ['Architect', 'System Designer', 'Senior Engineer', 'CTO Mindset']
     const typeSpeed = isDeleting ? 50 : 100
     const currentWord = words[wordIndex]
 
@@ -31,7 +31,7 @@ export default function Hero() {
     }, typeSpeed)
 
     return () => clearTimeout(timer)
-  }, [displayText, isDeleting, wordIndex, words])
+  }, [displayText, isDeleting, wordIndex])
 
   return (
     <section id="home" className="min-h-screen flex items-center justify-center relative overflow-hidden gradient-bg">
@@ -61,7 +61,7 @@ export default function Hero() {
             transition={{ delay: 0.5, duration: 0.8 }}
             className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto"
           >
-            Designing and shipping production-grade backend systems and cross-platform applications. 
+            Designing and shipping production-grade backend systems and cross-platform applications.
             I bridge the gap between complex business logic and scalable, maintainable architecture.
           </motion.p>
 

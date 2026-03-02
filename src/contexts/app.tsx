@@ -4,20 +4,23 @@ import Image from "next/image";
 import Link from "next/link";
 import {
 	LayoutDashboard,
-	LucideCodeSquare,
+	SquareCode,
 	BrainCog,
-	MessageSquareText,
+	MessageSquare,
+	Github,
+	Linkedin,
+	Twitter,
+	MessageCircle,
 } from "lucide-react";
 
 import React from "react";
-import { FaDiscord, FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa6";
 import NavBar from "@/(components)/navbar";
 import Footer from "@/(components)/footer";
 
 const farsan = Farsan({ subsets: ["latin"], weight: ["400"] });
 const farro = Farro({ subsets: ["latin"], weight: ["400"] });
 
-interface IAppContext {}
+interface IAppContext { }
 
 const AppContext = React.createContext<IAppContext | null>(null);
 
@@ -46,25 +49,25 @@ export default function AppProvider(props: React.PropsWithChildren) {
 						className="p-2 hover:bg-aurora-blue/30 text-star transition-all border border-aurora-blue rounded-xl"
 						href=""
 					>
-						<FaDiscord />
+						<MessageCircle />
 					</Link>
 					<Link
 						className="p-2 hover:bg-aurora-blue/30 text-star transition-all border border-aurora-blue rounded-xl"
 						href=""
 					>
-						<FaGithub />
+						<Github />
 					</Link>
 					<Link
 						className="p-2 hover:bg-aurora-blue/30 text-star transition-all border border-aurora-blue rounded-xl"
 						href=""
 					>
-						<FaLinkedin />
+						<Linkedin />
 					</Link>
 					<Link
 						className="p-2 hover:bg-aurora-blue/30 text-star transition-all border border-aurora-blue rounded-xl"
 						href=""
 					>
-						<FaTwitter />
+						<Twitter />
 					</Link>
 				</div>
 			</section>
@@ -77,10 +80,10 @@ export default function AppProvider(props: React.PropsWithChildren) {
 					<BrainCog />
 				</Link>
 				<Link href="/#projects">
-					<LucideCodeSquare />
+					<SquareCode />
 				</Link>
 				<Link href="/#contact">
-					<MessageSquareText />
+					<MessageSquare />
 				</Link>
 			</div>
 			<NavBar />
