@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Menu, X, Sun, Moon } from 'lucide-react'
 import { useTheme } from 'next-themes'
+import Link from 'next/link'
 import Image from 'next/image'
 
 export default function Navbar() {
@@ -36,15 +37,18 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="flex items-center space-x-2"
-          >
-            <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
-              <Image src="/brand-logo.png" alt="Logo" width={32} height={32} />
-            </div>
-          </motion.div>
+          <Link href="#home">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="flex items-center space-x-2 cursor-pointer"
+            >
+              <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center p-1">
+                <Image src="/logo.svg" alt="Logo" width={24} height={24} />
+              </div>
+              <span className="text-xl font-bold text-gradient">Portfolio</span>
+            </motion.div>
+          </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
