@@ -24,14 +24,12 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname:'opengraph.githubassets.com',
+        hostname: 'opengraph.githubassets.com',
         port: '',
         pathname: '/**',
       }
     ],
   },
-  basePath: '/my-portfolio',
-  assetPrefix: '/my-portfolio',
 }
 
 module.exports = nextConfig

@@ -8,8 +8,8 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 // Define the base URL for your site
-const baseUrl = process.env.NODE_ENV === 'production' 
-  ? 'https://jrcity.github.io/my-portfolio' 
+const baseUrl = process.env.NODE_ENV === 'production'
+  ? 'https://redemption-chi.vercel.app'
   : 'http://localhost:3000'
 
 export const metadata: Metadata = {
@@ -23,57 +23,57 @@ export const metadata: Metadata = {
     // Core Skills
     'full stack developer', 'software engineer', 'web developer', 'mobile developer',
     'frontend developer', 'backend developer', 'full-stack engineer',
-    
+
     // Technologies - Frontend
     'react developer', 'next.js developer', 'typescript developer', 'javascript developer',
     'react native developer', 'flutter developer', 'vue.js developer', 'angular developer',
     'html5', 'css3', 'tailwind css', 'bootstrap', 'sass', 'scss',
-    
+
     // Technologies - Backend
     'node.js developer', 'express.js developer', 'nest.js developer', 'api development',
     'rest api', 'graphql', 'microservices', 'serverless', 'aws lambda',
-    
+
     // Databases
     'mongodb developer', 'postgresql developer', 'mysql developer', 'redis developer',
     'database design', 'nosql', 'sql developer',
-    
+
     // Cloud & DevOps
     'aws developer', 'azure developer', 'google cloud', 'docker', 'kubernetes',
     'ci/cd', 'github actions', 'vercel', 'netlify', 'heroku',
-    
+
     // Mobile Development
     'react native', 'flutter', 'ios developer', 'android developer', 'mobile app development',
     'cross platform development', 'native mobile development',
-    
+
     // Specializations
     'ecommerce developer', 'dashboard development', 'admin panel development',
     'saas development', 'fintech developer', 'api integration',
-    
+
     // Location & Availability
     'nigerian developer', 'nigeria', 'lagos developer', 'abuja developer',
     'remote developer', 'freelance developer', 'contract developer',
     'hire developer', 'developer for hire', 'software consultant',
-    
+
     // Services
     'web development services', 'mobile app development services',
     'custom software development', 'mvp development', 'prototype development',
     'code review', 'technical consulting', 'system architecture',
     'performance optimization', 'bug fixing', 'debugging',
-    
+
     // Portfolio Related
     'portfolio', 'projects', 'github', 'open source', 'code samples',
     'developer portfolio', 'software engineer portfolio',
-    
+
     // Industry Terms
     'fintech', 'edtech', 'healthtech', 'proptech', 'startup developer',
     'enterprise development', 'scalable applications', 'high performance',
-    
+
     // Additional Skills
     'git', 'agile', 'scrum', 'test driven development', 'unit testing',
     'integration testing', 'code quality', 'clean code', 'solid principles'
   ],
   authors: [
-    { 
+    {
       name: 'Redemption Jonathan',
       url: 'https://github.com/jrcity'
     }
@@ -165,19 +165,20 @@ export default function RootLayout({
         <meta name="revisit-after" content="7 days" />
         <meta name="distribution" content="web" />
         <meta name="rating" content="general" />
-        
+
         {/* Favicon and App Icons */}
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/logo.svg" type="image/svg+xml" />
+        <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="manifest" href="/site.webmanifest" />
-        
+
         {/* Preconnect to external domains for performance */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://api.github.com" />
-        
+
         {/* Structured Data - JSON-LD */}
         <script
           type="application/ld+json"
@@ -192,8 +193,8 @@ export default function RootLayout({
               "url": baseUrl,
               "sameAs": [
                 "https://github.com/jrcity",
-                "https://linkedin.com/in/your-linkedin", // Replace with your LinkedIn
-                "https://twitter.com/your-twitter", // Replace with your Twitter
+                "https://linkedin.com/in/redemption",
+                "https://x.com/_crakton",
               ],
               "knowsAbout": [
                 "JavaScript", "TypeScript", "React", "Next.js", "Node.js",

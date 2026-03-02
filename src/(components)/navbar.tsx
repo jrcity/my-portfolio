@@ -43,10 +43,10 @@ export default function Navbar() {
               animate={{ opacity: 1, x: 0 }}
               className="flex items-center space-x-2 cursor-pointer"
             >
-              <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center p-1">
-                <Image src="/logo.svg" alt="Logo" width={24} height={24} />
+              <div className="flex items-center justify-center p-1">
+                <Image src="/brand-logo.png" alt="Logo" width={200} height={100} />
               </div>
-              <span className="text-xl font-bold text-gradient">Portfolio</span>
+
             </motion.div>
           </Link>
 
