@@ -4,11 +4,13 @@ import { motion } from 'framer-motion'
 import { ArrowRight, Download } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import SocialLinks from './ui/social-links'
+import { CVPickerModal } from './ui/cv-picker-modal'
 
 export default function Hero() {
   const [displayText, setDisplayText] = useState('')
   const [wordIndex, setWordIndex] = useState(0)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [isCVPickerOpen, setIsCVPickerOpen] = useState(false)
 
   useEffect(() => {
     const words = ['Architect', 'System Designer', 'Senior Engineer', 'CTO Mindset']
@@ -71,16 +73,19 @@ export default function Hero() {
             transition={{ delay: 0.8, duration: 0.8 }}
             className="flex flex-col sm:flex-row gap-4 justify-center items-center"
           >
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="group btn-primary px-8 py-4 rounded-xl font-semibold text-lg flex items-center gap-2"
-            >
-              View My Work
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </motion.button>
+            <a href="#projects" className="w-full sm:w-auto">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="group btn-primary px-8 py-4 rounded-xl font-semibold text-lg flex items-center gap-2 w-full justify-center"
+              >
+                View My Work
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </motion.button>
+            </a>
 
             <motion.button
+              onClick={() => setIsCVPickerOpen(true)}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="btn-outline px-8 py-4 rounded-xl font-semibold text-lg flex items-center gap-2"
@@ -109,6 +114,7 @@ export default function Hero() {
           <div className="w-1 h-3 bg-purple-400 rounded-full mt-2"></div>
         </div>
       </motion.div>
+      <CVPickerModal open={isCVPickerOpen} onOpenChange={setIsCVPickerOpen} />
     </section>
   )
 }

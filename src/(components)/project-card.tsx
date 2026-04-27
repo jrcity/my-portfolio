@@ -2,8 +2,9 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { ExternalLink, Github, Star, GitFork, Calendar, Layout, Database, Shield, Zap, X } from 'lucide-react'
+import { ExternalLink, Github, Star, GitFork, Calendar, Layout, Database, Shield, Zap, X, Bot } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useState } from 'react'
 import type { Project } from '@/types/project'
 
@@ -15,6 +16,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
   const [showArch, setShowArch] = useState(false)
   
   const {
+    id = 'unknown',
     title = 'Untitled Project',
     description = 'No description available',
     image,
@@ -126,7 +128,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                 </motion.a>
               )}
               
-              {demo && (
+              {demo ? (
                 <motion.a
                   href={demo}
                   target="_blank"
@@ -138,6 +140,17 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                   <ExternalLink className="w-4 h-4" />
                   Live Demo
                 </motion.a>
+              ) : (
+                <Link href={`/projects/${id}/preview`} className="flex-1">
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg transition-colors text-sm font-medium h-full justify-center shadow-lg shadow-purple-500/20"
+                  >
+                    <Bot className="w-4 h-4" />
+                    AI Preview
+                  </motion.div>
+                </Link>
               )}
             </div>
           </div>

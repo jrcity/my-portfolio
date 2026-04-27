@@ -2,14 +2,31 @@
 
 import { motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
-import { Code2, Github, Loader2, LayoutDashboard } from 'lucide-react'
+import { Code2, Github, Loader2, LayoutDashboard, LayoutGrid, List } from 'lucide-react'
 import { useGithubRepos } from '@/hooks/use-github-repos'
 import type { Project } from '@/types/project'
+
+type ViewMode = 'list' | 'grid'
+
+// Map language to a colour dot
+const LANG_COLORS: Record<string, string> = {
+  TypeScript: 'bg-blue-400',
+  JavaScript: 'bg-yellow-400',
+  Python: 'bg-green-400',
+  Dart: 'bg-sky-400',
+  PHP: 'bg-purple-400',
+  HTML: 'bg-orange-400',
+  CSS: 'bg-pink-400',
+  Go: 'bg-cyan-400',
+  Rust: 'bg-amber-600',
+  Java: 'bg-red-400',
+}
 
 export default function Sandbox() {
   const { repos, isLoading } = useGithubRepos(20)
   const [selectedRepo, setSelectedRepo] = useState<Project | null>(null)
   const [iframeLoading, setIframeLoading] = useState(false)
+  const [viewMode, setViewMode] = useState<ViewMode>('list')
 
   // Default to the first repo once loaded
   useEffect(() => {
@@ -25,11 +42,17 @@ export default function Sandbox() {
     }
   }
 
-  // Extract the raw repo name from the GitHub URL since the 'title' might be formatted
   const getRepoName = (githubUrl: string | null | undefined) => {
     if (!githubUrl) return null
     const parts = githubUrl.split('/')
     return parts[parts.length - 1]
+  }
+
+  const getLangColor = (stack: string[]) => {
+    for (const lang of stack) {
+      if (LANG_COLORS[lang]) return LANG_COLORS[lang]
+    }
+    return 'bg-gray-400'
   }
 
   return (
@@ -48,24 +71,55 @@ export default function Sandbox() {
         <div className="flex flex-col lg:flex-row gap-6 h-[700px]">
           {/* Repo Selection Sidebar */}
           <div className="w-full lg:w-1/3 flex flex-col gap-4 bg-gray-900/80 border border-purple-500/20 rounded-2xl p-4 overflow-y-auto custom-scrollbar">
-            <div className="flex items-center gap-3 pb-4 border-b border-gray-800">
-              <Github className="w-6 h-6 text-purple-400" />
-              <h3 className="text-xl font-bold">My Repositories</h3>
+            {/* Sidebar Header */}
+            <div className="flex items-center justify-between pb-4 border-b border-gray-800">
+              <div className="flex items-center gap-3">
+                <Github className="w-6 h-6 text-purple-400" />
+                <h3 className="text-xl font-bold">My Repositories</h3>
+              </div>
+              {/* List / Grid Toggle */}
+              <div className="flex items-center gap-1 bg-gray-800 p-1 rounded-lg">
+                <button
+                  id="sandbox-list-toggle"
+                  onClick={() => setViewMode('list')}
+                  title="List view"
+                  className={`p-1.5 rounded-md transition-all ${
+                    viewMode === 'list'
+                      ? 'bg-purple-600 text-white shadow'
+                      : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  <List className="w-4 h-4" />
+                </button>
+                <button
+                  id="sandbox-grid-toggle"
+                  onClick={() => setViewMode('grid')}
+                  title="Grid view"
+                  className={`p-1.5 rounded-md transition-all ${
+                    viewMode === 'grid'
+                      ? 'bg-purple-600 text-white shadow'
+                      : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  <LayoutGrid className="w-4 h-4" />
+                </button>
+              </div>
             </div>
-            
+
             {isLoading ? (
               <div className="flex-1 flex items-center justify-center">
                 <Loader2 className="w-8 h-8 text-purple-500 animate-spin" />
               </div>
-            ) : (
+            ) : viewMode === 'list' ? (
+              /* ── LIST VIEW ─────────────────────────── */
               <div className="space-y-2">
                 {repos.map((repo) => (
                   <button
                     key={repo.id}
                     onClick={() => handleRepoSelect(repo)}
                     className={`w-full text-left p-4 rounded-xl transition-all flex flex-col gap-2 ${
-                      selectedRepo?.id === repo.id 
-                        ? 'bg-purple-600/20 border border-purple-500/50 shadow-lg' 
+                      selectedRepo?.id === repo.id
+                        ? 'bg-purple-600/20 border border-purple-500/50 shadow-lg'
                         : 'bg-gray-800/50 border border-transparent hover:bg-gray-800'
                     }`}
                   >
@@ -73,7 +127,9 @@ export default function Sandbox() {
                       <span className="font-bold text-sm truncate pr-2" title={repo.title}>
                         {repo.title}
                       </span>
-                      {selectedRepo?.id === repo.id && <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />}
+                      {selectedRepo?.id === repo.id && (
+                        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse shrink-0" />
+                      )}
                     </div>
                     <div className="flex flex-wrap gap-1">
                       {repo.stack.slice(0, 3).map((tech, i) => (
@@ -82,6 +138,35 @@ export default function Sandbox() {
                         </span>
                       ))}
                     </div>
+                  </button>
+                ))}
+              </div>
+            ) : (
+              /* ── GRID VIEW ─────────────────────────── */
+              <div className="grid grid-cols-2 gap-2">
+                {repos.map((repo) => (
+                  <button
+                    key={repo.id}
+                    onClick={() => handleRepoSelect(repo)}
+                    title={repo.title}
+                    className={`text-left p-3 rounded-xl transition-all flex flex-col gap-2 ${
+                      selectedRepo?.id === repo.id
+                        ? 'bg-purple-600/20 border border-purple-500/50 shadow-lg'
+                        : 'bg-gray-800/50 border border-transparent hover:bg-gray-800'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className={`w-2.5 h-2.5 rounded-full ${getLangColor(repo.stack)}`} />
+                      {selectedRepo?.id === repo.id && (
+                        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                      )}
+                    </div>
+                    <span className="text-xs font-semibold leading-tight line-clamp-2" title={repo.title}>
+                      {repo.title}
+                    </span>
+                    {repo.stack[0] && (
+                      <span className="text-[10px] text-gray-500">{repo.stack[0]}</span>
+                    )}
                   </button>
                 ))}
               </div>

@@ -1,11 +1,8 @@
 import React from 'react'
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
 import { ThemeProvider } from '@/(components)/theme-provider'
 import { Toaster } from '@/(components)/ui/toast'
 import './globals.css'
-
-const inter = Inter({ subsets: ['latin'] })
 
 // Define the base URL for your site
 const baseUrl = process.env.NODE_ENV === 'production'
@@ -155,7 +152,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className="dark">
       <head>
         {/* Additional SEO meta tags */}
         <link rel="canonical" href={baseUrl} />
@@ -175,8 +172,6 @@ export default function RootLayout({
         <link rel="manifest" href="/site.webmanifest" />
 
         {/* Preconnect to external domains for performance */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://api.github.com" />
 
         {/* Structured Data - JSON-LD */}
@@ -212,7 +207,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={inter.className}>
+      <body className="font-satoshi">
         <ThemeProvider>
           {children}
           <Toaster />

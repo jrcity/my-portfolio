@@ -1,4 +1,3 @@
-// hooks/useGithubRepo.ts
 import { useState, useEffect } from 'react'
 import type { Project } from '@/types/project'
 
@@ -31,7 +30,7 @@ const transformGithubRepoToProject = (repo: any): Project => {
     if (name.includes('nest')) stack.push('NestJS')
     return Array.from(new Set(stack))
   }
-  
+
   const getCategory = (language: string | null, description: string | null, repoName: string): string => {
     const desc = description?.toLowerCase() || ''
     const name = repoName.toLowerCase()
@@ -42,10 +41,10 @@ const transformGithubRepoToProject = (repo: any): Project => {
     if (language === 'TypeScript' || language === 'JavaScript') return 'web'
     return 'other'
   }
-  
+
   return {
     id: repo.id,
-    title: repo.name.replace(/[-_]/g, ' ').replace(/\w\S*/g, (txt: string) => 
+    title: repo.name.replace(/[-_]/g, ' ').replace(/\w\S*/g, (txt: string) =>
       txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
     ),
     description: repo.description || 'No description available',
@@ -76,22 +75,27 @@ export const useGithubRepos = (limit: number = 20): UseGithubReposReturn => {
       try {
         setIsLoading(true)
         setIsError(false)
-        
+
         const username = process.env.NEXT_PUBLIC_GITHUB_USERNAME || 'jrcity';
         const url = `https://api.github.com/users/${username}/repos?sort=updated&per_page=${limit}`;
-        
+
         const response = await fetch(url);
-        
+
         if (!response.ok) {
           throw new Error(`GitHub API error! status: ${response.status}`);
         }
-        
+
         const data = await response.json();
-        
+
         const transformedRepos = data
-          .filter((repo: any) => !repo.archived)
+          .filter((repo: any) => 
+            !repo.archived && 
+            repo.name !== 'my-portfolio' && 
+            !repo.name.toLowerCase().includes('minty') && 
+            !repo.name.toLowerCase().includes('abbey')
+          )
           .map(transformGithubRepoToProject);
-        
+
         setRepos(transformedRepos);
         setMeta({
           count: transformedRepos.length,

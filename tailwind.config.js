@@ -19,6 +19,14 @@ module.exports = {
       '2xl': '1536px',
     },
     extend: {
+      fontFamily: {
+        sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
+        satoshi: ['Satoshi', 'sans-serif'],
+        'satoshi-regular': ['Satoshi Regular', 'sans-serif'],
+        'satoshi-medium': ['Satoshi Medium', 'sans-serif'],
+        'satoshi-italic': ['Satoshi Italic', 'sans-serif'],
+        'satoshi-bold': ['Satoshi Bold', 'sans-serif'],
+      },
       colors: {
         primary: {
           50: '#f0f9ff',
