@@ -2,6 +2,7 @@ import React from 'react'
 import type { Metadata } from 'next'
 import { ThemeProvider } from '@/(components)/theme-provider'
 import { Toaster } from '@/(components)/ui/toast'
+import { ChatWidget } from '@/(components)/ui/chat-widget'
 import './globals.css'
 
 // Define the base URL for your site
@@ -211,6 +212,7 @@ export default function RootLayout({
         <ThemeProvider>
           {children}
           <Toaster />
+          <ChatWidget />
         </ThemeProvider>
       </body>
     </html>
