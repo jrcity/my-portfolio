@@ -24,15 +24,9 @@ export function ChatWidget() {
   const [sessionId, setSessionId] = useState<string | null>(null)
   const [historyLoaded, setHistoryLoaded] = useState(false)
 
-  // Build the transport once sessionId is known so body is stable
-  const transport = useMemo(
-    () => sessionId ? new DefaultChatTransport({ body: { sessionId } }) : undefined,
-    [sessionId]
-  )
-
-  const { messages, sendMessage, status, setMessages, error } = useChat(
-    transport ? { transport } : {}
-  )
+  const { messages, append, status, setMessages, error } = useChat({
+    body: { sessionId },
+  })
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   // Initialise session ID and hydrate last-24h history on mount
@@ -65,7 +59,7 @@ export function ChatWidget() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!input.trim() || status === 'streaming' || status === 'submitted') return
-    sendMessage({ text: input })
+    append({ role: 'user', content: input })
     setInput('')
   }
 

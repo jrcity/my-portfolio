@@ -66,79 +66,113 @@ Stay in character at all times, be engaging, and optimize for creating meaningfu
 // ─── GET: Fetch last 24h messages for a session ───────────────────────────────
 export async function GET(req: NextRequest) {
   const sessionId = req.nextUrl.searchParams.get('sessionId');
+  console.log('[chat] GET request received. sessionId:', sessionId);
 
   if (!sessionId) {
     return Response.json({ error: 'sessionId is required' }, { status: 400 });
   }
 
-  const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
+  try {
+    const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
-  const conversation = await prisma.conversation.findUnique({
-    where: { sessionId },
-    include: {
-      messages: {
-        where: { createdAt: { gte: since } },
-        orderBy: { createdAt: 'asc' },
+    const conversation = await prisma.conversation.findUnique({
+      where: { sessionId },
+      include: {
+        messages: {
+          where: { createdAt: { gte: since } },
+          orderBy: { createdAt: 'asc' },
+        },
       },
-    },
-  });
+    });
 
-  const messages = conversation?.messages.map((m) => ({
-    id: m.id,
-    role: m.role,
-    content: m.content,
-    createdAt: m.createdAt,
-  })) ?? [];
+    const messages = conversation?.messages.map((m) => ({
+      id: m.id,
+      role: m.role,
+      content: m.content,
+      createdAt: m.createdAt,
+    })) ?? [];
 
-  return Response.json({ messages });
+    console.log(`[chat] Found ${messages.length} messages for sessionId:`, sessionId);
+    return Response.json({ messages });
+  } catch (err) {
+    console.error('[chat] GET Error:', err);
+    return Response.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
 }
 
-// ─── POST: Stream response + persist messages via onFinish ────────────────────
+// ─── POST: Stream response + persist messages ────────────────────────────────
 export async function POST(req: Request) {
-  const { messages, sessionId } = await req.json();
+  try {
+    const { messages, sessionId } = await req.json();
+    console.log('[chat] POST request received. sessionId:', sessionId);
 
-  // Grab the latest user message to persist
-  const userMessage = messages[messages.length - 1] as { role: string; content: string };
+    if (!messages || messages.length === 0) {
+      return Response.json({ error: 'messages are required' }, { status: 400 });
+    }
 
-  const result = streamText({
-    model: google('gemini-2.5-flash'),
-    messages: messages.map((m: { role: string; content: string; parts?: { type: string; text: string }[] }) => ({
-      role: m.role,
-      content: m.content || m.parts?.map((p) => (p.type === 'text' ? p.text : '')).join(''),
-    })),
-    system: SYSTEM_PROMPT,
-    onFinish: async ({ text }) => {
-      // Non-blocking: fire-and-forget after stream is already flowing to client
-      if (!sessionId) return;
+    const userMessage = messages[messages.length - 1];
+    let conversationId: string | undefined;
+
+    // 1. Persist user message immediately (so it's saved even if AI fails)
+    if (sessionId) {
       try {
+        console.log('[chat] Upserting conversation for sessionId:', sessionId);
         const conversation = await prisma.conversation.upsert({
           where: { sessionId },
           create: { sessionId },
           update: {},
         });
+        conversationId = conversation.id;
+        console.log('[chat] Conversation upserted. ID:', conversationId);
 
-        await prisma.message.createMany({
-          data: [
-            {
-              conversationId: conversation.id,
-              role: userMessage.role,
-              content: typeof userMessage.content === 'string'
-                ? userMessage.content
-                : JSON.stringify(userMessage.content),
-            },
-            {
-              conversationId: conversation.id,
-              role: 'assistant',
-              content: text,
-            },
-          ],
+        console.log('[chat] Saving user message...');
+        await prisma.message.create({
+          data: {
+            conversationId: conversation.id,
+            role: userMessage.role,
+            content: typeof userMessage.content === 'string'
+              ? userMessage.content
+              : JSON.stringify(userMessage.content),
+          },
         });
-      } catch (err) {
-        // Log but never let a DB error break the streamed response
-        console.error('[chat] Failed to persist messages:', err);
+        console.log('[chat] User message saved.');
+      } catch (dbErr) {
+        console.error('[chat] DB Error saving user message:', dbErr);
       }
-    },
-  });
+    }
 
-  return result.toUIMessageStreamResponse();
+    // 2. Stream AI response
+    console.log('[chat] Starting AI stream with gemini-2.0-flash...');
+    const result = streamText({
+      model: google('gemini-2.0-flash'),
+      messages: messages.map((m: any) => ({
+        role: m.role,
+        content: m.content || m.parts?.map((p: any) => (p.type === 'text' ? p.text : '')).join(''),
+      })),
+      system: SYSTEM_PROMPT,
+      onFinish: async ({ text }) => {
+        console.log('[chat] onFinish triggered.');
+        if (conversationId) {
+          try {
+            console.log('[chat] Saving assistant message...');
+            await prisma.message.create({
+              data: {
+                conversationId,
+                role: 'assistant',
+                content: text,
+              },
+            });
+            console.log('[chat] Assistant message saved.');
+          } catch (dbErr) {
+            console.error('[chat] DB Error saving assistant message:', dbErr);
+          }
+        }
+      },
+    });
+
+    return result.toUIMessageStreamResponse();
+  } catch (err) {
+    console.error('[chat] General POST Error:', err);
+    return Response.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
 }
