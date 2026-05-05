@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = process.env.NODE_ENV === 'production'
-    ? 'https://jrcity.github.io/my-portfolio'
+    ? 'https://redemption-chi.vercel.app'
     : 'http://localhost:3000'
 
   return [

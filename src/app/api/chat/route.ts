@@ -1,5 +1,7 @@
 import { google } from '@ai-sdk/google';
 import { streamText } from 'ai';
+import { prisma } from '@/lib/prisma';
+import { NextRequest } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 30;
@@ -48,29 +50,94 @@ If a visitor asks for a tour or walkthrough of the portfolio/sandbox, act as the
 Whenever the user asks about certain topics, you MUST gracefully redirect them to the contact form or email using the exact tone/style below. Do not try to fully solve these requests in the chat.
 
 1. **Freelance / Hiring / Collaboration** (e.g., "Are you available?", "Can you work with our team?", "We want to hire you"):
-   Response: "I’m currently open to high-impact roles and freelance opportunities. Let’s discuss this properly—reach out via the contact form or email."
+   Response: "I'm currently open to high-impact roles and freelance opportunities. Let's discuss this properly—reach out via the contact form or email."
 2. **Deep Architecture / System Design Consulting** (e.g., "Can you design this system?", "Help me architect a platform"):
-   Response: "This is something I’d want to properly scope and design with you. Let’s take it further via the contact form or email so I can give it the depth it deserves."
+   Response: "This is something I'd want to properly scope and design with you. Let's take it further via the contact form or email so I can give it the depth it deserves."
 3. **Pricing / Cost Estimation** (e.g., "How much would this cost?", "What would you charge?"):
-   Response: "Pricing depends heavily on scope, complexity, and timelines. Let’s discuss the details over email so I can give you an accurate estimate."
+   Response: "Pricing depends heavily on scope, complexity, and timelines. Let's discuss the details over email so I can give you an accurate estimate."
 4. **Proprietary / Sensitive Code Requests** (e.g., "Share your full project code", "Send me your backend structure"):
-   Response: "I can walk through patterns and approaches here, but for anything detailed or specific, let’s take that conversation offline."
+   Response: "I can walk through patterns and approaches here, but for anything detailed or specific, let's take that conversation offline."
 5. **Long-Term / Serious Product Ideas** (e.g., "I want to build a startup like Uber", "Can we work together on this idea?"):
-   Response: "That sounds like something worth building properly. Let’s discuss it in detail—reach out via email or the contact form."
+   Response: "That sounds like something worth building properly. Let's discuss it in detail—reach out via email or the contact form."
 
 Stay in character at all times, be engaging, and optimize for creating meaningful connections that lead to real-world collaboration.
 `;
 
+// ─── GET: Fetch last 24h messages for a session ───────────────────────────────
+export async function GET(req: NextRequest) {
+  const sessionId = req.nextUrl.searchParams.get('sessionId');
+
+  if (!sessionId) {
+    return Response.json({ error: 'sessionId is required' }, { status: 400 });
+  }
+
+  const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+  const conversation = await prisma.conversation.findUnique({
+    where: { sessionId },
+    include: {
+      messages: {
+        where: { createdAt: { gte: since } },
+        orderBy: { createdAt: 'asc' },
+      },
+    },
+  });
+
+  const messages = conversation?.messages.map((m) => ({
+    id: m.id,
+    role: m.role,
+    content: m.content,
+    createdAt: m.createdAt,
+  })) ?? [];
+
+  return Response.json({ messages });
+}
+
+// ─── POST: Stream response + persist messages via onFinish ────────────────────
 export async function POST(req: Request) {
-  const { messages } = await req.json();
+  const { messages, sessionId } = await req.json();
+
+  // Grab the latest user message to persist
+  const userMessage = messages[messages.length - 1] as { role: string; content: string };
 
   const result = streamText({
     model: google('gemini-2.5-flash'),
-    messages: messages.map((m: any) => ({
+    messages: messages.map((m: { role: string; content: string; parts?: { type: string; text: string }[] }) => ({
       role: m.role,
-      content: m.content || m.parts?.map((p: any) => p.type === 'text' ? p.text : '').join(''),
+      content: m.content || m.parts?.map((p) => (p.type === 'text' ? p.text : '')).join(''),
     })),
     system: SYSTEM_PROMPT,
+    onFinish: async ({ text }) => {
+      // Non-blocking: fire-and-forget after stream is already flowing to client
+      if (!sessionId) return;
+      try {
+        const conversation = await prisma.conversation.upsert({
+          where: { sessionId },
+          create: { sessionId },
+          update: {},
+        });
+
+        await prisma.message.createMany({
+          data: [
+            {
+              conversationId: conversation.id,
+              role: userMessage.role,
+              content: typeof userMessage.content === 'string'
+                ? userMessage.content
+                : JSON.stringify(userMessage.content),
+            },
+            {
+              conversationId: conversation.id,
+              role: 'assistant',
+              content: text,
+            },
+          ],
+        });
+      } catch (err) {
+        // Log but never let a DB error break the streamed response
+        console.error('[chat] Failed to persist messages:', err);
+      }
+    },
   });
 
   return result.toUIMessageStreamResponse();

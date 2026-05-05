@@ -1,48 +1,62 @@
 'use client'
 
 import { useChat } from '@ai-sdk/react';
-import { useState, useRef, useEffect } from 'react'
+import { DefaultChatTransport, isTextUIPart } from 'ai';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { MessageSquare, X, Send, User, Bot, Loader2 } from 'lucide-react'
+import { MessageSquare, X, Send, Bot, Loader2 } from 'lucide-react'
 
-const CACHE_KEY = 'chat_session_cache'
-const CACHE_DURATION = 24 * 60 * 60 * 1000 // 24 hours
+const SESSION_KEY = 'chat_session_id'
+
+function getOrCreateSessionId(): string {
+  let id = localStorage.getItem(SESSION_KEY)
+  if (!id) {
+    id = crypto.randomUUID()
+    localStorage.setItem(SESSION_KEY, id)
+  }
+  return id
+}
 
 export function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false)
   const [hasUnread, setHasUnread] = useState(false)
   const [input, setInput] = useState('')
-  const { messages, sendMessage, status, setMessages, error } = useChat()
+  const [sessionId, setSessionId] = useState<string | null>(null)
+  const [historyLoaded, setHistoryLoaded] = useState(false)
+
+  // Build the transport once sessionId is known so body is stable
+  const transport = useMemo(
+    () => sessionId ? new DefaultChatTransport({ body: { sessionId } }) : undefined,
+    [sessionId]
+  )
+
+  const { messages, sendMessage, status, setMessages, error } = useChat(
+    transport ? { transport } : {}
+  )
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  // Load cache on mount
+  // Initialise session ID and hydrate last-24h history on mount
   useEffect(() => {
-    const cached = localStorage.getItem(CACHE_KEY)
-    if (cached) {
-      try {
-        const { messages: cachedMessages, timestamp } = JSON.parse(cached)
-        const now = Date.now()
-        if (now - timestamp < CACHE_DURATION) {
-          setMessages(cachedMessages)
-        } else {
-          localStorage.removeItem(CACHE_KEY)
-        }
-      } catch (e) {
-        console.error('Failed to parse chat cache', e)
-        localStorage.removeItem(CACHE_KEY)
-      }
-    }
-  }, [setMessages])
+    const id = getOrCreateSessionId()
+    setSessionId(id)
 
-  // Save cache when messages change
-  useEffect(() => {
-    if (messages.length > 0) {
-      localStorage.setItem(CACHE_KEY, JSON.stringify({
-        messages,
-        timestamp: Date.now()
-      }))
-    }
-  }, [messages])
+    fetch(`/api/chat?sessionId=${id}`)
+      .then((res) => res.json())
+      .then(({ messages: history }: { messages: { id: string; role: string; content: string }[] }) => {
+        if (history?.length > 0) {
+          setMessages(
+            history.map((m) => ({
+              id: m.id,
+              role: m.role as 'user' | 'assistant',
+              parts: [{ type: 'text' as const, text: m.content }],
+              metadata: undefined,
+            }))
+          )
+        }
+      })
+      .catch((err) => console.error('[chat] Failed to load history:', err))
+      .finally(() => setHistoryLoaded(true))
+  }, [setMessages])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput(e.target.value)
@@ -55,9 +69,9 @@ export function ChatWidget() {
     setInput('')
   }
 
-  const scrollToBottom = () => {
+  const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }
+  }, [])
 
   useEffect(() => {
     if (isOpen) {
@@ -66,11 +80,9 @@ export function ChatWidget() {
     } else if (messages.length > 0 && messages[messages.length - 1].role === 'assistant') {
       setHasUnread(true)
     }
-  }, [messages, isOpen])
+  }, [messages, isOpen, scrollToBottom])
 
-  const toggleChat = () => {
-    setIsOpen(!isOpen)
-  }
+  const toggleChat = () => setIsOpen(!isOpen)
 
   return (
     <>
@@ -113,14 +125,20 @@ export function ChatWidget() {
 
               {/* Messages Area */}
               <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-black/40">
-                {messages.length === 0 && (
+                {!historyLoaded && (
+                  <div className="flex justify-center items-center h-full">
+                    <Loader2 className="w-5 h-5 animate-spin text-purple-400/50" />
+                  </div>
+                )}
+
+                {messages.length === 0 && historyLoaded && (
                   <div className="text-center text-gray-400 text-sm mt-10 space-y-3">
                     <Bot className="w-10 h-10 mx-auto text-purple-400/50" />
                     <p>Hi! I&apos;m Redemption&apos;s AI assistant. Ask me about his tech stack, experience, or availability!</p>
                   </div>
                 )}
 
-                {messages.map((m: any) => (
+                {messages.map((m) => (
                   <div
                     key={m.id}
                     className={`flex gap-3 ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
@@ -131,12 +149,15 @@ export function ChatWidget() {
                       </div>
                     )}
                     <div
-                      className={`max-w-[75%] p-3 rounded-2xl text-sm ${m.role === 'user'
-                        ? 'bg-purple-600 text-white rounded-br-sm'
-                        : 'bg-white/10 border border-white/5 text-gray-200 rounded-bl-sm'
-                        }`}
+                      className={`max-w-[75%] p-3 rounded-2xl text-sm ${
+                        m.role === 'user'
+                          ? 'bg-purple-600 text-white rounded-br-sm'
+                          : 'bg-white/10 border border-white/5 text-gray-200 rounded-bl-sm'
+                      }`}
                     >
-                      {m.parts?.map((p: any) => p.type === 'text' ? p.text : null) || m.text || m.content}
+                      {m.parts.filter(isTextUIPart).map((p, i) => (
+                        <span key={i}>{p.text}</span>
+                      ))}
                     </div>
                   </div>
                 ))}
@@ -147,7 +168,7 @@ export function ChatWidget() {
                       <Bot className="w-4 h-4 text-red-400" />
                     </div>
                     <div className="max-w-[75%] p-3 rounded-2xl text-sm bg-red-500/10 border border-red-500/20 text-red-200 rounded-bl-sm">
-                      {error.message || "An error occurred while generating the response."}
+                      {error.message || 'An error occurred while generating the response.'}
                     </div>
                   </div>
                 )}
@@ -167,10 +188,7 @@ export function ChatWidget() {
 
               {/* Input Area */}
               <div className="p-4 bg-black/60 border-t border-white/10 backdrop-blur-xl">
-                <form
-                  onSubmit={handleSubmit}
-                  className="flex items-center gap-2"
-                >
+                <form onSubmit={handleSubmit} className="flex items-center gap-2">
                   <input
                     value={input}
                     onChange={handleInputChange}
@@ -180,7 +198,7 @@ export function ChatWidget() {
                   />
                   <button
                     type="submit"
-                    disabled={status === 'streaming' || status === 'submitted' || !(input || '').trim()}
+                    disabled={status === 'streaming' || status === 'submitted' || !input.trim()}
                     className="w-10 h-10 rounded-full bg-purple-600 hover:bg-purple-500 flex items-center justify-center shrink-0 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     <Send className="w-4 h-4 text-white" />

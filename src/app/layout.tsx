@@ -98,31 +98,21 @@ export const metadata: Metadata = {
     description: 'Passionate full-stack developer and software engineer specializing in React, Next.js, TypeScript, Node.js, and mobile development. Available for hire, freelance projects, and consulting.',
     images: [
       {
-        url: '/images/og-image.jpg', // You'll need to create this image
-        width: 1200,
-        height: 630,
+        url: '/brand-logo-sm.png',
+        width: 1280,
+        height: 853,
         alt: 'Redemption Jonathan - Full Stack Developer Portfolio',
+        type: 'image/png',
       },
-      {
-        url: '/images/profile-photo.jpg', // Your profile photo
-        width: 800,
-        height: 800,
-        alt: 'Redemption Jonathan - Software Engineer',
-      }
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    site: '@your_twitter_handle', // Replace with your actual Twitter handle
-    creator: '@your_twitter_handle', // Replace with your actual Twitter handle
+    site: '@_crakton',
+    creator: '@_crakton',
     title: 'Redemption Jonathan - Full Stack Developer & Software Engineer',
     description: 'Passionate full-stack developer specializing in React, Next.js, TypeScript, and mobile development. Available for hire.',
-    images: ['/images/og-image.jpg'],
-  },
-  verification: {
-    google: 'your-google-verification-code', // Add your Google Search Console verification
-    // yandex: 'your-yandex-verification-code',
-    // bing: 'your-bing-verification-code',
+    images: ['/brand-logo-sm.png'],
   },
   alternates: {
     canonical: baseUrl,
@@ -155,15 +145,6 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className="dark">
       <head>
-        {/* Additional SEO meta tags */}
-        <link rel="canonical" href={baseUrl} />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
-        <meta name="language" content="English" />
-        <meta name="revisit-after" content="7 days" />
-        <meta name="distribution" content="web" />
-        <meta name="rating" content="general" />
-
         {/* Favicon and App Icons */}
         <link rel="icon" href="/logo.svg" type="image/svg+xml" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
@@ -189,7 +170,7 @@ export default function RootLayout({
               "url": baseUrl,
               "sameAs": [
                 "https://github.com/jrcity",
-                "https://linkedin.com/in/redemption",
+                "https://www.linkedin.com/in/redemption",
                 "https://x.com/_crakton",
               ],
               "knowsAbout": [
