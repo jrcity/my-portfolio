@@ -142,9 +142,9 @@ export async function POST(req: Request) {
     }
 
     // 2. Stream AI response
-    console.log('[chat] Starting AI stream with gemini-2.0-flash...');
+    console.log('[chat] Starting AI stream with gemini-2.5-flash...');
     const result = streamText({
-      model: google('gemini-2.0-flash'),
+      model: google('gemini-2.5-flash'),
       messages: messages.map((m: any) => ({
         role: m.role,
         content: m.content || m.parts?.map((p: any) => (p.type === 'text' ? p.text : '')).join(''),

@@ -1,8 +1,8 @@
 'use client'
 
 import { useChat } from '@ai-sdk/react';
-import { DefaultChatTransport, isTextUIPart } from 'ai';
-import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
+import { isTextUIPart } from 'ai';
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { MessageSquare, X, Send, Bot, Loader2 } from 'lucide-react'
 
@@ -24,9 +24,7 @@ export function ChatWidget() {
   const [sessionId, setSessionId] = useState<string | null>(null)
   const [historyLoaded, setHistoryLoaded] = useState(false)
 
-  const { messages, append, status, setMessages, error } = useChat({
-    body: { sessionId },
-  })
+  const { messages, sendMessage, status, setMessages, error } = useChat()
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   // Initialise session ID and hydrate last-24h history on mount
@@ -59,7 +57,7 @@ export function ChatWidget() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!input.trim() || status === 'streaming' || status === 'submitted') return
-    append({ role: 'user', content: input })
+    sendMessage({ text: input }, { body: { sessionId } })
     setInput('')
   }
 
@@ -143,13 +141,12 @@ export function ChatWidget() {
                       </div>
                     )}
                     <div
-                      className={`max-w-[75%] p-3 rounded-2xl text-sm ${
-                        m.role === 'user'
-                          ? 'bg-purple-600 text-white rounded-br-sm'
-                          : 'bg-white/10 border border-white/5 text-gray-200 rounded-bl-sm'
-                      }`}
+                      className={`max-w-[75%] p-3 rounded-2xl text-sm ${m.role === 'user'
+                        ? 'bg-purple-600 text-white rounded-br-sm'
+                        : 'bg-white/10 border border-white/5 text-gray-200 rounded-bl-sm'
+                        }`}
                     >
-                      {m.parts.filter(isTextUIPart).map((p, i) => (
+                      {m.parts?.filter(isTextUIPart).map((p, i) => (
                         <span key={i}>{p.text}</span>
                       ))}
                     </div>

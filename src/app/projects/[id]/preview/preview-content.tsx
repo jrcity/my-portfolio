@@ -49,23 +49,46 @@ export default function PreviewContent({ id }: { id: string }) {
     setInput('')
     setIsTyping(true)
 
-    // Simulate AI response based on project stack and architecture
+    // Simulate AI response based on project stack, architecture and case study
     setTimeout(() => {
       let aiResponse = ''
       const lowerInput = userMessage.toLowerCase()
 
       if (lowerInput.includes('start') || lowerInput.includes('run')) {
-        aiResponse = `To start the application, you can run \`npm run dev\` or \`docker-compose up\` in the terminal. The architecture relies on ${project.stack.join(', ')}.`
-        setTerminalOutput(prev => [...prev, `root@container:/workspace$ npm run dev`, '> Starting development server...', '> Server listening on port 3000'])
-      } else if (lowerInput.includes('architecture') || lowerInput.includes('database')) {
-        aiResponse = `This project uses ${project.architecture?.storageStrategy}. Would you like me to execute a query or show you the schema?`
+        const startCmd = project.stack.includes('Laravel') ? 'php artisan serve' : 
+                         project.stack.includes('Flutter') ? 'flutter run' : 
+                         project.stack.includes('React Native') ? 'npx expo start' : 'npm run dev';
+        
+        aiResponse = `Initializing ${project.title} services. You can start the environment using \`${startCmd}\`. The stack is built on ${project.stack.join(', ')}.`
+        setTerminalOutput(prev => [...prev, `root@container:/workspace$ ${startCmd}`, `> Starting ${project.title} services...`, '> Environment ready at http://localhost:3000'])
+      } else if (lowerInput.includes('problem') || lowerInput.includes('solve')) {
+        aiResponse = project.caseStudy 
+          ? `The primary challenge was: ${project.caseStudy.problem}` 
+          : `This project was designed to address ${project.description.toLowerCase()}.`
+      } else if (lowerInput.includes('role') || lowerInput.includes('contribute')) {
+        aiResponse = project.caseStudy 
+          ? `In this project, I: ${project.caseStudy.role}` 
+          : `I served as the lead developer, architecting the ${project.category} solution.`
+      } else if (lowerInput.includes('decision') || lowerInput.includes('architecture')) {
+        const decisions = project.caseStudy?.keyEngineeringDecisions.map(d => `**${d.title}**: ${d.description}`).join('\n\n') || '';
+        aiResponse = project.architecture 
+          ? `The architecture is a ${project.architecture.systemDesign}. \n\n${decisions}` 
+          : `The architecture follows standard ${project.category} patterns using ${project.stack.join(', ')}.`
+      } else if (lowerInput.includes('outcome') || lowerInput.includes('shipped') || lowerInput.includes('result')) {
+        aiResponse = project.caseStudy 
+          ? `Outcome: ${project.caseStudy.outcomes}` 
+          : `The project was successfully built and features ${project.tags.slice(0, 3).join(', ')}.`
+      } else if (lowerInput.includes('learn')) {
+        aiResponse = project.caseStudy 
+          ? `Key takeaway: ${project.caseStudy.learned}` 
+          : `This project deepened my expertise in ${project.stack.slice(0, 2).join(' and ')}.`
       } else {
-        aiResponse = `I'm an AI simulated guide for ${project.title}. I can help you understand the codebase, run services, or inspect the ${project.category} architecture.`
+        aiResponse = `I'm an AI guide for **${project.title}**. You can ask me about the **problem** I solved, my **role** in the project, the **architecture** decisions, or the final **outcomes**.`
       }
 
       setMessages(prev => [...prev, { role: 'ai', content: aiResponse }])
       setIsTyping(false)
-    }, 1500)
+    }, 1200)
   }
 
   return (
