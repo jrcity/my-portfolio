@@ -1,4 +1,4 @@
-import { google } from '@ai-sdk/google';
+import { openai } from '@ai-sdk/openai';
 import { streamText } from 'ai';
 import { prisma } from '@/lib/prisma';
 import { NextRequest } from 'next/server';
@@ -142,9 +142,9 @@ export async function POST(req: Request) {
     }
 
     // 2. Stream AI response
-    console.log('[chat] Starting AI stream with gemini-2.5-flash...');
+    console.log('[chat] Starting AI stream with GPT-4o...');
     const result = streamText({
-      model: google('gemini-2.5-flash'),
+      model: openai('gpt-4o'),
       messages: messages.map((m: any) => ({
         role: m.role,
         content: m.content || m.parts?.map((p: any) => (p.type === 'text' ? p.text : '')).join(''),
