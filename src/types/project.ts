@@ -21,4 +21,14 @@ export interface Project {
     authStrategy: string // JWT, OAuth, RBAC etc
     scalability: string // How it scales (Redis, Queues etc)
   }
+  caseStudy?: {
+    problem: string
+    role: string
+    keyEngineeringDecisions: {
+      title: string
+      description: string
+    }[]
+    outcomes: string
+    learned: string
+  }
 }

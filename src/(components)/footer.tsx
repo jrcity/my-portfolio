@@ -1,6 +1,8 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import Image from 'next/image'
+import Link from 'next/link'
 
 export default function Footer() {
   return (
@@ -12,12 +14,19 @@ export default function Footer() {
           viewport={{ once: true }}
           className="text-center"
         >
-          <div className="flex items-center justify-center space-x-2 mb-4">
-            <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">P</span>
-            </div>
-            <span className="text-xl font-bold text-gradient">Portfolio</span>
-          </div>
+          <Link href="/">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="flex justify-center items-center space-x-2 cursor-pointer"
+            >
+              <div className="flex items-center justify-center p-1">
+                <Image src="/brand-logo.png" alt="Logo" width={200} height={100} />
+              </div>
+
+            </motion.div>
+          </Link>
+
           <p className="text-muted-foreground mb-4">
             Built with passion using Next.js, TailwindCSS, and Framer Motion
           </p>
