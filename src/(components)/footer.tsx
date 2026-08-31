@@ -33,6 +33,13 @@ export default function Footer() {
           <p className="text-sm text-muted-foreground">
             © {new Date().getFullYear()} Redemption Jonathan. All rights reserved.
           </p>
+          <p className="mt-3 hidden sm:block text-xs text-muted-foreground/60">
+            Press{' '}
+            <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px]">
+              ⌘K
+            </kbd>{' '}
+            to search the site
+          </p>
         </motion.div>
       </div>
     </footer>

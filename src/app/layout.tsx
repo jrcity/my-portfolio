@@ -3,6 +3,9 @@ import type { Metadata } from 'next'
 import { ThemeProvider } from '@/(components)/theme-provider'
 import { Toaster } from '@/(components)/ui/toast'
 import { ChatWidget } from '@/(components)/ui/chat-widget'
+import { Analytics } from '@vercel/analytics/react'
+import { CommandPalette } from '@/(components)/command-palette'
+import { getPostMetas } from '@/lib/blog'
 import './globals.css'
 
 // Define the base URL for your site
@@ -103,6 +106,9 @@ export default function RootLayout({
         {/* Preconnect to external domains for performance */}
         <link rel="preconnect" href="https://api.github.com" />
 
+        {/* RSS autodiscovery */}
+        <link rel="alternate" type="application/rss+xml" title="Redemption Jonathan — Blog" href="/rss.xml" />
+
         {/* Structured Data - JSON-LD */}
         <script
           type="application/ld+json"
@@ -141,6 +147,14 @@ export default function RootLayout({
           {children}
           <Toaster />
           <ChatWidget />
+          <CommandPalette
+            posts={getPostMetas().map((p) => ({
+              slug: p.slug,
+              title: p.title,
+              tags: p.tags,
+            }))}
+          />
+          <Analytics />
         </ThemeProvider>
       </body>
     </html>
