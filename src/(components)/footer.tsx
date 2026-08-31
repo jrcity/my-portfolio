@@ -31,7 +31,7 @@ export default function Footer() {
             Built with passion using Next.js, TailwindCSS, and Framer Motion
           </p>
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Portfolio. All rights reserved.
+            © {new Date().getFullYear()} Redemption Jonathan. All rights reserved.
           </p>
         </motion.div>
       </div>

@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 import { ArrowRight, Download } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import SocialLinks from './ui/social-links'
@@ -44,6 +45,21 @@ export default function Hero() {
           transition={{ duration: 0.8 }}
           className="space-y-8"
         >
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: "spring", stiffness: 100, damping: 15 }}
+            className="mb-8 relative w-32 h-32 md:w-40 md:h-40 mx-auto"
+          >
+            <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-purple-500 to-blue-500 blur-md opacity-50" />
+            <Image
+              src="/images/me.jpg"
+              alt="Redemption Jonathan"
+              fill
+              className="object-cover rounded-full border-4 border-white dark:border-gray-900 shadow-xl"
+              priority
+            />
+          </motion.div>
           <motion.div
             animate={{ y: [0, -10, 0] }}
             transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}

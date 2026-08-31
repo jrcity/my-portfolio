@@ -34,8 +34,11 @@ export default function ParticleBackground() {
     window.addEventListener('resize', resizeCanvas)
     window.addEventListener('mousemove', handleMouseMove)
 
+    const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (isReducedMotion) return
+    
     const particles: Particle[] = []
-    const particleCount = 80
+    const particleCount = window.innerWidth < 768 ? 30 : 80
 
     for (let i = 0; i < particleCount; i++) {
       particles.push({
@@ -116,6 +119,7 @@ export default function ParticleBackground() {
   return (
     <canvas
       ref={canvasRef}
+      aria-hidden="true"
       className="fixed inset-0 pointer-events-none z-0 opacity-80" // Increased canvas opacity from 40 to 80
       style={{ background: 'transparent' }}
     />

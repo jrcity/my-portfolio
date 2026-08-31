@@ -5,7 +5,7 @@ Disallow: /admin/
 Allow: /
 
 # Sitemap
-Sitemap: https://jrcity.github.io/my-portfolio/sitemap.xml
+Sitemap: https://redemption-chi.vercel.app/sitemap.xml
 
 # Crawl-delay for respectful crawling
 Crawl-delay: 1

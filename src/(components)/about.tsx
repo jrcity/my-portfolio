@@ -77,7 +77,7 @@ export default function About() {
           >
             <h3 className="text-2xl font-bold text-purple-400">The Senior Perspective</h3>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              I approach software with a **CTO-level mindset**. I prioritize clean architecture and strong separation of concerns, mirroring Django’s structured philosophy across NestJS, Laravel, and Express environments. 
+              I approach software with a <span className="font-bold">CTO-level mindset</span>. I prioritize clean architecture and strong separation of concerns, mirroring Django’s structured philosophy across NestJS, Laravel, and Express environments. 
               My goal is to ship systems that are not just functional, but scalable from day one and easily maintainable for long-term growth.
             </p>
 

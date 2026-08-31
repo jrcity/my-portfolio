@@ -56,7 +56,7 @@ export default function Sandbox() {
   }
 
   return (
-    <section id="sandbox" className="py-20 bg-gray-900/50 relative overflow-hidden">
+    <section id="sandbox" className="py-20 bg-white dark:bg-gray-900/50 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
@@ -70,15 +70,15 @@ export default function Sandbox() {
 
         <div className="flex flex-col lg:flex-row gap-6 h-[700px]">
           {/* Repo Selection Sidebar */}
-          <div className="w-full lg:w-1/3 flex flex-col gap-4 bg-gray-900/80 border border-purple-500/20 rounded-2xl p-4 overflow-y-auto custom-scrollbar">
+          <div className="w-full lg:w-1/3 flex flex-col gap-4 bg-white dark:bg-gray-900/80 border border-purple-500/20 rounded-2xl p-4 overflow-y-auto custom-scrollbar">
             {/* Sidebar Header */}
-            <div className="flex items-center justify-between pb-4 border-b border-gray-800">
+            <div className="flex items-center justify-between pb-4 border-b border-gray-200 dark:border-gray-800">
               <div className="flex items-center gap-3">
                 <Github className="w-6 h-6 text-purple-400" />
                 <h3 className="text-xl font-bold">My Repositories</h3>
               </div>
               {/* List / Grid Toggle */}
-              <div className="flex items-center gap-1 bg-gray-800 p-1 rounded-lg">
+              <div className="flex items-center gap-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
                 <button
                   id="sandbox-list-toggle"
                   onClick={() => setViewMode('list')}
@@ -86,7 +86,7 @@ export default function Sandbox() {
                   className={`p-1.5 rounded-md transition-all ${
                     viewMode === 'list'
                       ? 'bg-purple-600 text-white shadow'
-                      : 'text-gray-400 hover:text-white'
+                      : 'text-gray-600 dark:text-gray-400 hover:text-white'
                   }`}
                 >
                   <List className="w-4 h-4" />
@@ -98,7 +98,7 @@ export default function Sandbox() {
                   className={`p-1.5 rounded-md transition-all ${
                     viewMode === 'grid'
                       ? 'bg-purple-600 text-white shadow'
-                      : 'text-gray-400 hover:text-white'
+                      : 'text-gray-600 dark:text-gray-400 hover:text-white'
                   }`}
                 >
                   <LayoutGrid className="w-4 h-4" />
@@ -120,7 +120,7 @@ export default function Sandbox() {
                     className={`w-full text-left p-4 rounded-xl transition-all flex flex-col gap-2 ${
                       selectedRepo?.id === repo.id
                         ? 'bg-purple-600/20 border border-purple-500/50 shadow-lg'
-                        : 'bg-gray-800/50 border border-transparent hover:bg-gray-800'
+                        : 'bg-gray-100 dark:bg-gray-800/50 border border-transparent hover:bg-gray-100 dark:bg-gray-800'
                     }`}
                   >
                     <div className="flex items-center justify-between">
@@ -133,7 +133,7 @@ export default function Sandbox() {
                     </div>
                     <div className="flex flex-wrap gap-1">
                       {repo.stack.slice(0, 3).map((tech, i) => (
-                        <span key={i} className="text-[10px] px-2 py-0.5 rounded-full bg-gray-900/50 text-gray-400">
+                        <span key={i} className="text-[10px] px-2 py-0.5 rounded-full bg-white dark:bg-gray-900/50 text-gray-600 dark:text-gray-400">
                           {tech}
                         </span>
                       ))}
@@ -152,7 +152,7 @@ export default function Sandbox() {
                     className={`text-left p-3 rounded-xl transition-all flex flex-col gap-2 ${
                       selectedRepo?.id === repo.id
                         ? 'bg-purple-600/20 border border-purple-500/50 shadow-lg'
-                        : 'bg-gray-800/50 border border-transparent hover:bg-gray-800'
+                        : 'bg-gray-100 dark:bg-gray-800/50 border border-transparent hover:bg-gray-100 dark:bg-gray-800'
                     }`}
                   >
                     <div className="flex items-center justify-between">
@@ -175,7 +175,7 @@ export default function Sandbox() {
 
           {/* Sandbox Viewer Area */}
           <div className="w-full lg:w-2/3 glass-effect rounded-2xl border border-blue-500/20 flex flex-col overflow-hidden relative">
-            <div className="bg-gray-900/80 p-4 border-b border-gray-800 flex items-center justify-between">
+            <div className="bg-white dark:bg-gray-900/80 p-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <Code2 className="w-5 h-5 text-blue-400" />
                 <span className="font-bold text-sm text-gray-200">
@@ -193,9 +193,9 @@ export default function Sandbox() {
               {selectedRepo ? (
                 <>
                   {iframeLoading && (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-900 z-10">
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-white dark:bg-gray-900 z-10">
                       <Loader2 className="w-8 h-8 text-blue-500 animate-spin mb-4" />
-                      <p className="text-sm text-gray-400 font-mono">Spinning up CodeSandbox container...</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 font-mono">Spinning up CodeSandbox container...</p>
                     </div>
                   )}
                   {getRepoName(selectedRepo.github) ? (
