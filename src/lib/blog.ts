@@ -1,10 +1,6 @@
-import fs from 'fs'
-import path from 'path'
-import matter from 'gray-matter'
 import { remark } from 'remark'
 import html from 'remark-html'
-
-const postsDirectory = path.join(process.cwd(), 'src/content/blog')
+import { prisma } from '@/lib/prisma'
 
 export interface PostMeta {
   slug: string
@@ -18,47 +14,97 @@ export interface Post extends PostMeta {
   contentHtml: string
 }
 
-export function getPostMetas(): PostMeta[] {
-  if (!fs.existsSync(postsDirectory)) {
-    return []
-  }
-
-  const fileNames = fs.readdirSync(postsDirectory).filter((f) => f.endsWith('.md'))
-
-  return fileNames
-    .map((fileName) => {
-      const fullPath = path.join(postsDirectory, fileName)
-      const { data } = matter(fs.readFileSync(fullPath, 'utf8'))
-
-      return {
-        slug: fileName.replace(/\.md$/, ''),
-        title: data.title ?? fileName,
-        description: data.description ?? '',
-        date: data.date ? new Date(data.date).toISOString() : '',
-        tags: data.tags ?? [],
-      }
-    })
-    .sort((a, b) => (a.date < b.date ? 1 : -1))
+export interface AdminPost {
+  id: string
+  slug: string
+  title: string
+  description: string
+  content: string
+  tags: string[]
+  published: boolean
+  publishedAt: string | null
+  views: number
+  likes: number
+  comments: number
+  createdAt: string
 }
 
-export async function getPost(slug: string): Promise<Post | null> {
-  const fullPath = path.join(postsDirectory, `${slug}.md`)
+// Published posts, newest first. Fail-safe so a cold/unreachable database
+// never breaks rendering of the site.
+export async function getPostMetas(options?: { includeDrafts?: boolean }): Promise<PostMeta[]> {
+  try {
+    const posts = await prisma.post.findMany({
+      where: options?.includeDrafts ? undefined : { published: true },
+      orderBy: { publishedAt: 'desc' },
+      select: { slug: true, title: true, description: true, publishedAt: true, createdAt: true, tags: true },
+    })
 
-  if (!fs.existsSync(fullPath)) {
+    return posts.map((post) => ({
+      slug: post.slug,
+      title: post.title,
+      description: post.description,
+      date: (post.publishedAt ?? post.createdAt).toISOString(),
+      tags: post.tags,
+    }))
+  } catch {
+    return []
+  }
+}
+
+export async function getPost(slug: string, options?: { includeDrafts?: boolean }): Promise<Post | null> {
+  try {
+    const post = await prisma.post.findUnique({
+      where: { slug },
+    })
+
+    if (!post) return null
+    if (!post.published && !options?.includeDrafts) return null
+
+    const processed = await remark().use(html).process(post.content)
+
+    return {
+      slug: post.slug,
+      title: post.title,
+      description: post.description,
+      date: (post.publishedAt ?? post.createdAt).toISOString(),
+      tags: post.tags,
+      contentHtml: processed.toString(),
+    }
+  } catch {
     return null
   }
+}
 
-  const { data, content } = matter(fs.readFileSync(fullPath, 'utf8'))
-  const processed = await remark().use(html).process(content)
+export async function getAdminPosts(): Promise<AdminPost[]> {
+  const posts = await prisma.post.findMany({
+    orderBy: { createdAt: 'desc' },
+    include: { _count: { select: { comments: true } } },
+  })
 
-  return {
-    slug,
-    title: data.title ?? slug,
-    description: data.description ?? '',
-    date: data.date ? new Date(data.date).toISOString() : '',
-    tags: data.tags ?? [],
-    contentHtml: processed.toString(),
-  }
+  return posts.map((post) => ({
+    id: post.id,
+    slug: post.slug,
+    title: post.title,
+    description: post.description,
+    content: post.content,
+    tags: post.tags,
+    published: post.published,
+    publishedAt: post.publishedAt?.toISOString() ?? null,
+    views: post.views,
+    likes: post.likes,
+    comments: post._count.comments,
+    createdAt: post.createdAt.toISOString(),
+  }))
+}
+
+export function slugify(title: string): string {
+  return title
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/[\s_]+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
 }
 
 export function formatDate(isoDate: string): string {

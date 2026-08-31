@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next'
 import { privateProjects } from '@/constants/projects'
 import { getPostMetas } from '@/lib/blog'
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NODE_ENV === 'production'
     ? 'https://redemption-chi.vercel.app'
     : 'http://localhost:3000'
@@ -14,7 +14,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }))
 
-  const blogUrls: MetadataRoute.Sitemap = getPostMetas().map((post) => ({
+  const posts = await getPostMetas()
+  const blogUrls: MetadataRoute.Sitemap = posts.map((post) => ({
     url: `${baseUrl}/blog/${post.slug}`,
     lastModified: post.date ? new Date(post.date) : new Date(),
     changeFrequency: 'monthly',

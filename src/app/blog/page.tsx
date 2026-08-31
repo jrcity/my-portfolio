@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowLeft, Calendar, Clock, Tag } from 'lucide-react'
+import { ArrowLeft, Calendar, Tag } from 'lucide-react'
 import { getPostMetas, formatDate } from '@/lib/blog'
 
 export const metadata: Metadata = {
@@ -12,8 +12,10 @@ export const metadata: Metadata = {
   },
 }
 
-export default function BlogIndex() {
-  const posts = getPostMetas()
+export const revalidate = 60
+
+export default async function BlogIndex() {
+  const posts = await getPostMetas()
 
   return (
     <div className="min-h-screen bg-gray-900 pb-20 pt-32">
@@ -50,10 +52,12 @@ export default function BlogIndex() {
                     {formatDate(post.date)}
                   </span>
                 )}
-                <span className="flex items-center gap-1.5">
-                  <Tag className="w-3.5 h-3.5" />
-                  {post.tags.join(' · ')}
-                </span>
+                {post.tags.length > 0 && (
+                  <span className="flex items-center gap-1.5">
+                    <Tag className="w-3.5 h-3.5" />
+                    {post.tags.join(' · ')}
+                  </span>
+                )}
               </div>
               <h2 className="text-xl md:text-2xl font-bold text-white group-hover:text-purple-300 transition-colors">
                 {post.title}
@@ -67,6 +71,12 @@ export default function BlogIndex() {
               </span>
             </Link>
           ))}
+
+          {posts.length === 0 && (
+            <p className="text-gray-500 text-center py-12">
+              Nothing published yet — check back soon.
+            </p>
+          )}
         </div>
       </div>
     </div>

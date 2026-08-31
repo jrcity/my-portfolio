@@ -87,11 +87,12 @@ export const metadata: Metadata = {
   }
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const posts = await getPostMetas()
   return (
     <html lang="en" suppressHydrationWarning className="dark">
       <head>
@@ -148,7 +149,7 @@ export default function RootLayout({
           <Toaster />
           <ChatWidget />
           <CommandPalette
-            posts={getPostMetas().map((p) => ({
+            posts={posts.map((p) => ({
               slug: p.slug,
               title: p.title,
               tags: p.tags,

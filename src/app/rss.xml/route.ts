@@ -14,7 +14,7 @@ function escapeXml(value: string): string {
 }
 
 export async function GET() {
-  const posts = getPostMetas()
+  const posts = await getPostMetas()
 
   const items = posts
     .map(

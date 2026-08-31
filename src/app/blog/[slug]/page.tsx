@@ -2,17 +2,16 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, Calendar, Clock, Tag } from 'lucide-react'
-import { getPost, getPostMetas, formatDate, readingTime } from '@/lib/blog'
+import { getPost, formatDate, readingTime } from '@/lib/blog'
+import { PostInteractions } from '@/(components)/ui/post-interactions'
+import { ShareButtons } from '@/(components)/ui/share-buttons'
 
 const baseUrl = process.env.NODE_ENV === 'production'
   ? 'https://redemption-chi.vercel.app'
   : 'http://localhost:3000'
 
-export function generateStaticParams() {
-  return getPostMetas().map((post) => ({
-    slug: post.slug,
-  }))
-}
+// Views/likes/comments change per request — render dynamically
+export const dynamic = 'force-dynamic'
 
 export async function generateMetadata({
   params,
@@ -34,6 +33,12 @@ export async function generateMetadata({
       type: 'article',
       publishedTime: post.date,
       tags: post.tags,
+      url: `${baseUrl}/blog/${post.slug}`,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: post.description,
     },
   }
 }
@@ -58,6 +63,12 @@ export default async function BlogPost({ params }: { params: { slug: string } })
       url: baseUrl,
     },
     keywords: post.tags.join(', '),
+    interactionStatistic: [
+      {
+        '@type': 'InteractionCounter',
+        interactionType: 'https://schema.org/ViewAction',
+      },
+    ],
   }
 
   return (
@@ -88,10 +99,12 @@ export default async function BlogPost({ params }: { params: { slug: string } })
                 <Clock className="w-3.5 h-3.5" />
                 {readingTime(post.contentHtml)}
               </span>
-              <span className="flex items-center gap-1.5">
-                <Tag className="w-3.5 h-3.5" />
-                {post.tags.join(' · ')}
-              </span>
+              {post.tags.length > 0 && (
+                <span className="flex items-center gap-1.5">
+                  <Tag className="w-3.5 h-3.5" />
+                  {post.tags.join(' · ')}
+                </span>
+              )}
             </div>
             <h1 className="text-3xl md:text-4xl font-bold leading-tight text-white">
               {post.title}
@@ -99,12 +112,17 @@ export default async function BlogPost({ params }: { params: { slug: string } })
             <p className="text-lg text-gray-400 mt-4 leading-relaxed">
               {post.description}
             </p>
+            <div className="mt-6">
+              <ShareButtons slug={post.slug} title={post.title} />
+            </div>
           </header>
 
           <div
             className="blog-content text-gray-300"
             dangerouslySetInnerHTML={{ __html: post.contentHtml }}
           />
+
+          <PostInteractions slug={post.slug} />
         </article>
       </div>
     </div>
