@@ -77,7 +77,7 @@ export default function Projects() {
                   </span>
                 )}
               </p>
-              <p className="text-gray-400 text-xs mt-2">
+              <p className="text-gray-600 dark:text-gray-400 text-xs mt-2">
                 Showing {privateProjects?.length || 0} private projects
               </p>
             </div>
@@ -105,7 +105,7 @@ export default function Projects() {
           </motion.div>
         ) : !isLoading ? (
           <div className="text-center py-12">
-            <p className="text-gray-400">No projects found for the current filter.</p>
+            <p className="text-gray-600 dark:text-gray-400">No projects found for the current filter.</p>
           </div>
         ) : null}
 
@@ -115,7 +115,7 @@ export default function Projects() {
             <button
               onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
-              className="px-4 py-2 rounded-lg bg-gray-800 text-gray-300 disabled:opacity-50 hover:bg-gray-700 transition-colors"
+              className="px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 disabled:opacity-50 hover:bg-gray-200 dark:bg-gray-700 transition-colors"
             >
               Previous
             </button>
@@ -127,7 +127,7 @@ export default function Projects() {
                   onClick={() => setCurrentPage(page)}
                   className={`w-10 h-10 rounded-lg font-medium transition-all ${currentPage === page
                       ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/25'
-                      : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                      : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:bg-gray-700'
                     }`}
                 >
                   {page}
@@ -138,7 +138,7 @@ export default function Projects() {
             <button
               onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
               disabled={currentPage === totalPages}
-              className="px-4 py-2 rounded-lg bg-gray-800 text-gray-300 disabled:opacity-50 hover:bg-gray-700 transition-colors"
+              className="px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 disabled:opacity-50 hover:bg-gray-200 dark:bg-gray-700 transition-colors"
             >
               Next
             </button>
@@ -150,7 +150,7 @@ export default function Projects() {
           <div className="mt-8 text-center">
             <details className="text-xs text-gray-500">
               <summary className="cursor-pointer">Debug Info</summary>
-              <div className="mt-2 text-left max-w-lg mx-auto bg-gray-900/50 p-3 rounded">
+              <div className="mt-2 text-left max-w-lg mx-auto bg-white dark:bg-gray-900/50 p-3 rounded">
                 <p>GitHub Repos: {githubRepos?.length || 0}</p>
                 <p>Private Projects: {privateProjects?.length || 0}</p>
                 <p>Rate Limit: {meta.rateLimit.remaining}/{meta.rateLimit.limit}</p>

@@ -139,24 +139,24 @@ export default function ContactForm() {
             disabled={isSubmitting || isSuccess}
             className="w-full px-4 py-3 glass-effect rounded-xl bg-transparent border border-border focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all appearance-none cursor-pointer disabled:opacity-60"
           >
-            <option value="" disabled className="bg-gray-900">Select a topic</option>
-            <optgroup label="Project Inquiry" className="bg-gray-900 font-semibold text-purple-400">
-              <option value="New Project" className="bg-gray-900">🚀 New Project</option>
-              <option value="Existing Project" className="bg-gray-900">🛠 Existing Project Update</option>
-              <option value="Consulting" className="bg-gray-900">💡 Consulting / Advisory</option>
+            <option value="" disabled className="bg-white dark:bg-gray-900">Select a topic</option>
+            <optgroup label="Project Inquiry" className="bg-white dark:bg-gray-900 font-semibold text-purple-400">
+              <option value="New Project" className="bg-white dark:bg-gray-900">🚀 New Project</option>
+              <option value="Existing Project" className="bg-white dark:bg-gray-900">🛠 Existing Project Update</option>
+              <option value="Consulting" className="bg-white dark:bg-gray-900">💡 Consulting / Advisory</option>
             </optgroup>
-            <optgroup label="Career" className="bg-gray-900 font-semibold text-blue-400">
-              <option value="Full-time" className="bg-gray-900">💼 Full-time Opportunity</option>
-              <option value="Contract" className="bg-gray-900">📜 Contract / Freelance</option>
-              <option value="Partnership" className="bg-gray-900">🤝 Partnership</option>
+            <optgroup label="Career" className="bg-white dark:bg-gray-900 font-semibold text-blue-400">
+              <option value="Full-time" className="bg-white dark:bg-gray-900">💼 Full-time Opportunity</option>
+              <option value="Contract" className="bg-white dark:bg-gray-900">📜 Contract / Freelance</option>
+              <option value="Partnership" className="bg-white dark:bg-gray-900">🤝 Partnership</option>
             </optgroup>
-            <optgroup label="Technical" className="bg-gray-900 font-semibold text-green-400">
-              <option value="System Design" className="bg-gray-900">🏗 System Design Review</option>
-              <option value="Code Audit" className="bg-gray-900">🔍 Code Audit</option>
-              <option value="Other" className="bg-gray-900">💬 Other</option>
+            <optgroup label="Technical" className="bg-white dark:bg-gray-900 font-semibold text-green-400">
+              <option value="System Design" className="bg-white dark:bg-gray-900">🏗 System Design Review</option>
+              <option value="Code Audit" className="bg-white dark:bg-gray-900">🔍 Code Audit</option>
+              <option value="Other" className="bg-white dark:bg-gray-900">💬 Other</option>
             </optgroup>
           </select>
-          <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+          <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 dark:text-gray-400 pointer-events-none" />
         </div>
       </div>
 
