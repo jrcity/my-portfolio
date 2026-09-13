@@ -204,7 +204,7 @@ export function ChatWidget() {
           onClick={toggleChat}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="relative w-14 h-14 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 shadow-lg shadow-purple-500/30 flex items-center justify-center text-white mr-2"
+          className="relative w-14 h-14 rounded-full bg-black/5 dark:bg-white/10 border border-black/10 dark:border-white/20 backdrop-blur-sm hover:bg-black/10 dark:hover:bg-white/20 text-black dark:text-white shadow-lg shadow-purple-500/30 flex items-center justify-center text-white mr-2"
         >
           {isOpen ? <X className="w-6 h-6" /> : <MessageSquare className="w-6 h-6" />}
 

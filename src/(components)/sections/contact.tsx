@@ -36,7 +36,7 @@ export default function Contact() {
 
 							<div className="space-y-4">
 								<div className="flex items-center space-x-4">
-									<div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center">
+									<div className="w-12 h-12 bg-black/5 dark:bg-white/10 border border-black/10 dark:border-white/20 backdrop-blur-sm hover:bg-black/10 dark:hover:bg-white/20 text-black dark:text-white rounded-full flex items-center justify-center">
 										<Mail className="w-6 h-6 text-white" />
 									</div>
 									<div>
@@ -46,7 +46,7 @@ export default function Contact() {
 								</div>
 
 								<div className="flex items-center space-x-4">
-									<div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center">
+									<div className="w-12 h-12 bg-black/5 dark:bg-white/10 border border-black/10 dark:border-white/20 backdrop-blur-sm hover:bg-black/10 dark:hover:bg-white/20 text-black dark:text-white rounded-full flex items-center justify-center">
 										<MapPin className="w-6 h-6 text-white" />
 									</div>
 									<div>

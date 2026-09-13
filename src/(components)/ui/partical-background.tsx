@@ -2,13 +2,12 @@
 
 import { useEffect, useRef } from 'react'
 
-interface Particle {
+interface Node {
   x: number
   y: number
   vx: number
   vy: number
-  size: number
-  color: string
+  radius: number
 }
 
 export default function ParticleBackground() {
@@ -16,14 +15,22 @@ export default function ParticleBackground() {
   const mouseRef = useRef({ x: 0, y: 0 })
 
   useEffect(() => {
+    const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (isReducedMotion) return
+
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
+    let width = window.innerWidth
+    let height = window.innerHeight
+
     const resizeCanvas = () => {
-      canvas.width = window.innerWidth
-      canvas.height = window.innerHeight
+      width = window.innerWidth
+      height = window.innerHeight
+      canvas.width = width
+      canvas.height = height
     }
 
     const handleMouseMove = (e: MouseEvent) => {
@@ -34,76 +41,75 @@ export default function ParticleBackground() {
     window.addEventListener('resize', resizeCanvas)
     window.addEventListener('mousemove', handleMouseMove)
 
-    const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (isReducedMotion) return
-    
-    const particles: Particle[] = []
-    const particleCount = window.innerWidth < 768 ? 30 : 80
+    const nodes: Node[] = []
+    const isMobile = width < 768
+    const nodeCount = isMobile ? 40 : 100
+    const connectionDistance = isMobile ? 100 : 150
 
-    for (let i = 0; i < particleCount; i++) {
-      particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.3,
-        vy: (Math.random() - 0.5) * 0.3,
-        size: Math.random() * 2 + 1,
-        color: i % 2 === 0 ? '#9333ea' : '#3b82f6'
+    for (let i = 0; i < nodeCount; i++) {
+      nodes.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: (Math.random() - 0.5) * 0.5,
+        radius: Math.random() * 2 + 1,
       })
     }
 
     const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      ctx.clearRect(0, 0, width, height)
       
-      // Connection distance
-      const maxDist = 150
-      
-      particles.forEach((p, i) => {
-        // Subtle drift
-        p.x += p.vx
-        p.y += p.vy
+      const themeColor = document.documentElement.classList.contains('dark') 
+        ? { r: 147, g: 51, b: 234 } // Purple-500
+        : { r: 59, g: 130, b: 246 } // Blue-500
 
-        // Wrap around screen
-        if (p.x < 0) p.x = canvas.width
-        if (p.x > canvas.width) p.x = 0
-        if (p.y < 0) p.y = canvas.height
-        if (p.y > canvas.height) p.y = 0
+      for (let i = 0; i < nodes.length; i++) {
+        const node = nodes[i]
 
-        // Interaction with mouse
-        const dx = mouseRef.current.x - p.x
-        const dy = mouseRef.current.y - p.y
+        // Move nodes slowly
+        node.x += node.vx
+        node.y += node.vy
+
+        // Wrap around screen boundaries
+        if (node.x < 0) node.x = width
+        if (node.x > width) node.x = 0
+        if (node.y < 0) node.y = height
+        if (node.y > height) node.y = 0
+
+        // Interaction with mouse (repel)
+        const dx = mouseRef.current.x - node.x
+        const dy = mouseRef.current.y - node.y
         const dist = Math.sqrt(dx * dx + dy * dy)
         
-        if (dist < 200) {
-          const force = (200 - dist) / 200
-          p.x -= dx * force * 0.02
-          p.y -= dy * force * 0.02
+        if (dist < 150) {
+          const force = (150 - dist) / 150
+          node.x -= dx * force * 0.05
+          node.y -= dy * force * 0.05
         }
 
-        // Draw particle
+        // Draw nodes
         ctx.beginPath()
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2)
-        ctx.fillStyle = p.color + '88' // Increased opacity from 44 to 88
-        ctx.shadowBlur = 5
-        ctx.shadowColor = p.color
+        ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(${themeColor.r}, ${themeColor.g}, ${themeColor.b}, 0.5)`
         ctx.fill()
 
         // Draw connections
-        for (let j = i + 1; j < particles.length; j++) {
-          const p2 = particles[j]
-          const dx2 = p.x - p2.x
-          const dy2 = p.y - p2.y
+        for (let j = i + 1; j < nodes.length; j++) {
+          const otherNode = nodes[j]
+          const dx2 = node.x - otherNode.x
+          const dy2 = node.y - otherNode.y
           const dist2 = Math.sqrt(dx2 * dx2 + dy2 * dy2)
 
-          if (dist2 < maxDist) {
+          if (dist2 < connectionDistance) {
             ctx.beginPath()
-            ctx.strokeStyle = `rgba(147, 51, 234, ${0.2 * (1 - dist2 / maxDist)})` // Increased line opacity
-            ctx.lineWidth = 0.8 // Slightly thicker lines
-            ctx.moveTo(p.x, p.y)
-            ctx.lineTo(p2.x, p2.y)
+            ctx.strokeStyle = `rgba(${themeColor.r}, ${themeColor.g}, ${themeColor.b}, ${0.2 * (1 - dist2 / connectionDistance)})`
+            ctx.lineWidth = 1
+            ctx.moveTo(node.x, node.y)
+            ctx.lineTo(otherNode.x, otherNode.y)
             ctx.stroke()
           }
         }
-      })
+      }
 
       requestAnimationFrame(animate)
     }
@@ -120,7 +126,7 @@ export default function ParticleBackground() {
     <canvas
       ref={canvasRef}
       aria-hidden="true"
-      className="fixed inset-0 pointer-events-none z-0 opacity-80" // Increased canvas opacity from 40 to 80
+      className="fixed inset-0 pointer-events-none z-0 opacity-40 mix-blend-screen"
       style={{ background: 'transparent' }}
     />
   )

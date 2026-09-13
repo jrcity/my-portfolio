@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { AdminConversationsResponse, ConversationWithMessages } from "@/types/admin";
 
 export default function AdminDashboard() {
@@ -61,6 +62,17 @@ export default function AdminDashboard() {
             Protected Area
           </div>
         </header>
+
+        {/* Blog Manager shortcut */}
+        <Link
+          href="/admin/blog"
+          className="block bg-neutral-900 border border-neutral-800 hover:border-purple-500/40 rounded-xl p-5 transition-colors"
+        >
+          <h2 className="text-lg font-semibold text-white">📝 Blog Manager</h2>
+          <p className="text-sm text-neutral-400 mt-1">
+            Write, publish, and manage blog posts — with views, likes, and comments.
+          </p>
+        </Link>
 
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

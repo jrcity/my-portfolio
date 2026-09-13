@@ -1,6 +1,6 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { motion, useScroll, useTransform } from 'framer-motion'
 import Image from 'next/image'
 import { ArrowRight, Download } from 'lucide-react'
 import { useState, useEffect } from 'react'
@@ -12,6 +12,10 @@ export default function Hero() {
   const [wordIndex, setWordIndex] = useState(0)
   const [isDeleting, setIsDeleting] = useState(false)
   const [isCVPickerOpen, setIsCVPickerOpen] = useState(false)
+  const { scrollY } = useScroll()
+  const y1 = useTransform(scrollY, [0, 500], [0, 100])
+  const opacity = useTransform(scrollY, [0, 300], [1, 0])
+
 
   useEffect(() => {
     const words = ['Architect', 'System Designer', 'Senior Engineer', 'CTO Mindset']

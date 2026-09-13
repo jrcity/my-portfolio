@@ -2,11 +2,34 @@ import { notFound } from 'next/navigation'
 import { privateProjects } from '@/constants/projects'
 import { Bot, CheckCircle, Cog, Database, GraduationCap, Layout, Shield, Zap, AlertCircle, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
+import type { Metadata } from 'next'
+
+const baseUrl = process.env.NODE_ENV === 'production'
+  ? 'https://redemption-chi.vercel.app'
+  : 'http://localhost:3000'
 
 export async function generateStaticParams() {
   return privateProjects.map((project) => ({
     id: project.id,
   }))
+}
+
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+  const project = privateProjects.find((p) => p.id === params.id)
+  if (!project) return {}
+
+  return {
+    title: `${project.title} — Technical Case Study`,
+    description: project.description,
+    alternates: {
+      canonical: `/projects/${project.id}`,
+    },
+    openGraph: {
+      title: `${project.title} — Technical Case Study`,
+      description: project.description,
+      type: 'article',
+    },
+  }
 }
 
 export default function ProjectPage({ params }: { params: { id: string } }) {
@@ -17,6 +40,37 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
   }
 
   const { title, caseStudy, architecture, stack } = project
+
+  // Structured data for rich search results
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: baseUrl },
+          { '@type': 'ListItem', position: 2, name: 'Projects', item: `${baseUrl}/projects` },
+          { '@type': 'ListItem', position: 3, name: title, item: `${baseUrl}/projects/${project.id}` },
+        ],
+      },
+      {
+        '@type': 'TechArticle',
+        headline: `${title} — Technical Case Study`,
+        description: project.description,
+        url: `${baseUrl}/projects/${project.id}`,
+        author: {
+          '@type': 'Person',
+          name: 'Redemption Jonathan',
+          url: baseUrl,
+        },
+        keywords: stack.join(', '),
+        ...(caseStudy?.keyEngineeringDecisions?.[0] && {
+            about: caseStudy.keyEngineeringDecisions.map((d) => d.title).join(', '),
+        }),
+      },
+    ],
+  }
+
 
   if (!caseStudy && !architecture) {
     // If there's no technical case study, redirect back or show a minimal view
@@ -35,6 +89,10 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
 
   return (
     <div className="min-h-screen bg-gray-900 pb-20 pt-32">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <Link 
           href="/#projects" 
@@ -87,7 +145,7 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
                       </div>
                       <div className="grid md:grid-cols-2 gap-6">
                         {caseStudy.keyEngineeringDecisions.map((decision, idx) => (
-                          <div key={idx} className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 p-6 rounded-xl border border-purple-500/10 hover:border-purple-500/30 transition-colors shadow-lg">
+                          <div key={idx} className="bg-black/40 backdrop-blur-md p-6 rounded-xl border border-purple-500/10 hover:border-purple-500/30 transition-colors shadow-lg">
                             <h3 className="text-purple-300 font-bold mb-3 flex items-center gap-2">
                               <span className="flex items-center justify-center w-6 h-6 rounded-full bg-purple-500/20 text-xs shrink-0">{idx + 1}</span>
                               {decision.title}

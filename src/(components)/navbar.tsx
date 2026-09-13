@@ -26,6 +26,7 @@ export default function Navbar() {
     { href: '#home', label: 'Home' },
     { href: '#about', label: 'About' },
     { href: '#projects', label: 'Projects' },
+    { href: '/blog', label: 'Blog' },
     { href: '#sandbox', label: 'Sandbox' },
     { href: '#contact', label: 'Contact' },
   ]
