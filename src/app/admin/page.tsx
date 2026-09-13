@@ -73,6 +73,17 @@ export default function AdminDashboard() {
             Write, publish, and manage blog posts — with views, likes, and comments.
           </p>
         </Link>
+        
+        {/* Testimonials Manager shortcut */}
+        <Link
+          href="/admin/testimonials"
+          className="block bg-neutral-900 border border-neutral-800 hover:border-emerald-500/40 rounded-xl p-5 transition-colors"
+        >
+          <h2 className="text-lg font-semibold text-white">✨ Testimonials</h2>
+          <p className="text-sm text-neutral-400 mt-1">
+            Review, approve, and manage recommendations from your peers and clients.
+          </p>
+        </Link>
 
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
