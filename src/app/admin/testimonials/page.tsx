@@ -138,7 +138,7 @@ export default function TestimonialsAdmin() {
                 </div>
 
                 <div className="text-neutral-300 text-sm italic mb-6 flex-1">
-                  "{testimonial.message}"
+                  &quot;{testimonial.message}&quot;
                 </div>
 
                 <div className="flex gap-2 mt-auto pt-4 border-t border-neutral-800/50">
