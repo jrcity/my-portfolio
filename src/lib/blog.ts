@@ -60,7 +60,14 @@ export async function getPost(slug: string, options?: { includeDrafts?: boolean 
     if (!post) return null
     if (!post.published && !options?.includeDrafts) return null
 
-    const processed = await remark().use(html).process(post.content)
+    
+    let contentHtml = post.content
+    // If it doesn't look like HTML from TipTap, it might be old markdown
+    if (!post.content.trim().startsWith('<')) {
+      const processed = await remark().use(html).process(post.content)
+      contentHtml = processed.toString()
+    }
+
 
     return {
       slug: post.slug,
@@ -68,7 +75,7 @@ export async function getPost(slug: string, options?: { includeDrafts?: boolean 
       description: post.description,
       date: (post.publishedAt ?? post.createdAt).toISOString(),
       tags: post.tags,
-      contentHtml: processed.toString(),
+      contentHtml,
     }
   } catch {
     return null

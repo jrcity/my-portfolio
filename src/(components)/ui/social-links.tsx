@@ -24,7 +24,7 @@ export default function SocialLinks() {
           transition={{ delay: index * 0.1 }}
           whileHover={{ scale: 1.1, y: -2 }}
           whileTap={{ scale: 0.95 }}
-          className="w-12 h-12 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center hover:shadow-lg transition-all"
+          className="w-12 h-12 bg-black/5 dark:bg-white/10 border border-black/10 dark:border-white/20 backdrop-blur-sm hover:bg-black/10 dark:hover:bg-white/20 text-black dark:text-white rounded-full flex items-center justify-center hover:shadow-lg transition-all"
           aria-label={link.label}
         >
           <link.icon className="w-6 h-6 text-white" />

@@ -72,53 +72,53 @@ export default async function BlogPost({ params }: { params: { slug: string } })
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 pb-20 pt-32">
+    <div className="min-h-screen bg-gray-900 pb-20 pt-32 prose dark:prose-invert max-w-none">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 prose dark:prose-invert max-w-none">
         <Link
           href="/blog"
-          className="inline-flex items-center gap-2 text-gray-400 hover:text-purple-400 transition-colors mb-8"
+          className="inline-flex items-center gap-2 text-gray-400 hover:text-purple-400 transition-colors mb-8 prose dark:prose-invert max-w-none"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="w-4 h-4 prose dark:prose-invert max-w-none" />
           All articles
         </Link>
 
         <article>
-          <header className="mb-10">
-            <div className="flex flex-wrap items-center gap-4 text-xs text-gray-500 mb-4">
+          <header className="mb-10 prose dark:prose-invert max-w-none">
+            <div className="flex flex-wrap items-center gap-4 text-xs text-gray-500 mb-4 prose dark:prose-invert max-w-none">
               {post.date && (
-                <span className="flex items-center gap-1.5">
-                  <Calendar className="w-3.5 h-3.5" />
+                <span className="flex items-center gap-1.5 prose dark:prose-invert max-w-none">
+                  <Calendar className="w-3.5 h-3.5 prose dark:prose-invert max-w-none" />
                   {formatDate(post.date)}
                 </span>
               )}
-              <span className="flex items-center gap-1.5">
-                <Clock className="w-3.5 h-3.5" />
+              <span className="flex items-center gap-1.5 prose dark:prose-invert max-w-none">
+                <Clock className="w-3.5 h-3.5 prose dark:prose-invert max-w-none" />
                 {readingTime(post.contentHtml)}
               </span>
               {post.tags.length > 0 && (
-                <span className="flex items-center gap-1.5">
-                  <Tag className="w-3.5 h-3.5" />
+                <span className="flex items-center gap-1.5 prose dark:prose-invert max-w-none">
+                  <Tag className="w-3.5 h-3.5 prose dark:prose-invert max-w-none" />
                   {post.tags.join(' · ')}
                 </span>
               )}
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold leading-tight text-white">
+            <h1 className="text-3xl md:text-4xl font-bold leading-tight text-white prose dark:prose-invert max-w-none">
               {post.title}
             </h1>
-            <p className="text-lg text-gray-400 mt-4 leading-relaxed">
+            <p className="text-lg text-gray-400 mt-4 leading-relaxed prose dark:prose-invert max-w-none">
               {post.description}
             </p>
-            <div className="mt-6">
+            <div className="mt-6 prose dark:prose-invert max-w-none">
               <ShareButtons slug={post.slug} title={post.title} />
             </div>
           </header>
 
           <div
-            className="blog-content text-gray-300"
+            className="blog-content text-gray-300 prose dark:prose-invert max-w-none"
             dangerouslySetInnerHTML={{ __html: post.contentHtml }}
           />
 

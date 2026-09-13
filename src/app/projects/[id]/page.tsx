@@ -145,7 +145,7 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
                       </div>
                       <div className="grid md:grid-cols-2 gap-6">
                         {caseStudy.keyEngineeringDecisions.map((decision, idx) => (
-                          <div key={idx} className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 p-6 rounded-xl border border-purple-500/10 hover:border-purple-500/30 transition-colors shadow-lg">
+                          <div key={idx} className="bg-black/40 backdrop-blur-md p-6 rounded-xl border border-purple-500/10 hover:border-purple-500/30 transition-colors shadow-lg">
                             <h3 className="text-purple-300 font-bold mb-3 flex items-center gap-2">
                               <span className="flex items-center justify-center w-6 h-6 rounded-full bg-purple-500/20 text-xs shrink-0">{idx + 1}</span>
                               {decision.title}

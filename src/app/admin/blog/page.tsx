@@ -17,6 +17,7 @@ import {
   X,
 } from 'lucide-react'
 import type { AdminPost } from '@/lib/blog'
+import { TiptapEditor } from '@/(components)/ui/TiptapEditor'
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 

@@ -46,3 +46,13 @@ model Comment {
   createdAt DateTime @default(now())
   post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
 }
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  name      String
+  role      String?
+  company   String?
+  message   String
+  approved  Boolean  @default(false)
+  createdAt DateTime @default(now())
+}

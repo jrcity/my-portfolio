@@ -91,7 +91,7 @@ export default function About() {
                   transition={{ delay: index * 0.1 }}
                   className="flex items-center space-x-4"
                 >
-                  <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className="w-12 h-12 bg-black/5 dark:bg-white/10 border border-black/10 dark:border-white/20 backdrop-blur-sm hover:bg-black/10 dark:hover:bg-white/20 text-black dark:text-white rounded-full flex items-center justify-center flex-shrink-0">
                     <item.icon className="w-6 h-6 text-white" />
                   </div>
                   <div>

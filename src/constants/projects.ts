@@ -6,7 +6,7 @@ export const privateProjects: Project[] = [
     title: 'Support24',
     description:
       'A production-grade healthcare support platform featuring complex shift scheduling, incident reporting, and a multi-tenant RBAC system.',
-    image: '/images/gcp-1.png',
+    image: '/images/support24.jpg',
     stack: ['React Native', 'Node.js', 'Express', 'MongoDB', 'TypeScript'],
     category: 'fullstack',
     github: null,
@@ -41,7 +41,7 @@ export const privateProjects: Project[] = [
     title: 'Cashworx',
     description:
       'A government-scale tax and service payment platform architected to centralize fragmented fiscal channels into a secure, transparent ecosystem.',
-    image: '/images/cashworx.png',
+    image: '/images/cashworx.jpg',
     stack: ['Laravel', 'Next.js', 'Flutter', 'PostgreSQL', 'Redis', 'JWT', 'Docker'],
     category: 'fullstack',
     github: null,
@@ -76,7 +76,7 @@ export const privateProjects: Project[] = [
     title: 'Jollivry',
     description:
       'A high-performance food delivery ecosystem featuring location-aware service discovery, real-time order tracking, and multi-gateway payment integration.',
-    image: '/images/foodly.png',
+    image: '/images/jollivry.jpg',
     stack: ['React Native', 'Expo', 'Zustand', 'TypeScript', 'TanStack Query', 'NativeWind', 'Firebase'],
     category: 'mobile',
     github: null,
@@ -111,7 +111,7 @@ export const privateProjects: Project[] = [
     title: 'SnapShop AI',
     description:
       'An experimental AI shopping assistant utilizing computer vision to match real-world products with local e-commerce listings.',
-    image: '/images/snap2shop.png',
+    image: '/images/snapshop.jpg',
     stack: ['Next.js', 'Python', 'TensorFlow', 'TypeScript', 'PostgreSQL'],
     category: 'ai',
     github: null,

@@ -7,7 +7,10 @@ const globalForPrisma = globalThis as unknown as {
 }
 
 function createPrismaClient() {
-  const url = process.env.DATABASE_URL || "postgresql://neondb_owner:npg_x8ZoHyptQIi1@ep-royal-voice-ampgvera-pooler.c-5.us-east-1.aws.neon.tech/neondb?sslmode=require"
+    const url = process.env.DATABASE_URL
+  if (!url) {
+    throw new Error('DATABASE_URL is not set')
+  }
   const pool = new Pool({ connectionString: url })
   const adapter = new PrismaPg(pool)
   

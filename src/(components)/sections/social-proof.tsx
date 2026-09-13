@@ -1,7 +1,9 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Users, Building2, Globe2, Briefcase } from 'lucide-react'
+import { Users, Building2, Globe2, Briefcase, ExternalLink } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import Link from 'next/link'
 
 const stats = [
   {
@@ -26,7 +28,32 @@ const stats = [
   }
 ]
 
+type Testimonial = {
+  id: string
+  name: string
+  role: string | null
+  company: string | null
+  message: string
+}
+
 export default function SocialProof() {
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([])
+
+  useEffect(() => {
+    const fetchTestimonials = async () => {
+      try {
+        const res = await fetch('/api/testimonials')
+        if (res.ok) {
+          const data = await res.json()
+          setTestimonials(data)
+        }
+      } catch (err) {
+        console.error('Failed to fetch testimonials', err)
+      }
+    }
+    fetchTestimonials()
+  }, [])
+
   return (
     <section className="py-20 relative overflow-hidden bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -45,7 +72,7 @@ export default function SocialProof() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
           {stats.map((stat, index) => (
             <motion.div
               key={index}
@@ -68,7 +95,7 @@ export default function SocialProof() {
           ))}
         </div>
 
-        {/* Testimonials Placeholder */}
+        {/* Testimonials */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -76,17 +103,48 @@ export default function SocialProof() {
           transition={{ delay: 0.4, duration: 0.8 }}
           className="mt-20 text-center"
         >
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 max-w-3xl mx-auto shadow-xl border border-gray-100 dark:border-gray-700 relative">
-            <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-gradient-to-r from-purple-600 to-blue-600 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl font-serif">
-              &quot;
+          {testimonials.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
+              {testimonials.map((t) => (
+                <div key={t.id} className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-xl border border-gray-100 dark:border-gray-700 relative">
+                  <div className="absolute -top-4 -left-4 bg-white/10 border border-white/20 backdrop-blur-sm text-white text-white w-8 h-8 rounded-full flex items-center justify-center text-xl font-serif">
+                    &quot;
+                  </div>
+                  <p className="text-base text-gray-700 dark:text-gray-300 italic mb-6 mt-2">
+                    &quot;{t.message}&quot;
+                  </p>
+                  <div>
+                    <h4 className="font-bold text-gray-900 dark:text-white">{t.name}</h4>
+                    <p className="text-sm text-purple-500">
+                      {t.role} {t.role && t.company ? 'at' : ''} {t.company}
+                    </p>
+                  </div>
+                </div>
+              ))}
             </div>
-            <p className="text-lg md:text-xl text-gray-700 dark:text-gray-300 italic mb-6 mt-4">
-              &quot;Jonathan brings a CTO-level mindset to every project. His ability to architect scalable solutions while maintaining clean code is unparalleled. He doesn&apos;t just write code; he builds robust systems that stand the test of time.&quot;
-            </p>
-            <div>
-              <h4 className="font-bold text-gray-900 dark:text-white">Engineering Director</h4>
-              <p className="text-sm text-purple-500">Global Tech Enterprise</p>
+          ) : (
+            <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 max-w-3xl mx-auto shadow-xl border border-gray-100 dark:border-gray-700 relative">
+              <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-white/10 border border-white/20 backdrop-blur-sm text-white text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl font-serif">
+                &quot;
+              </div>
+              <p className="text-lg md:text-xl text-gray-700 dark:text-gray-300 italic mb-6 mt-4">
+                &quot;Jonathan brings a CTO-level mindset to every project. His ability to architect scalable solutions while maintaining clean code is unparalleled. He doesn&apos;t just write code; he builds robust systems that stand the test of time.&quot;
+              </p>
+              <div>
+                <h4 className="font-bold text-gray-900 dark:text-white">Engineering Director</h4>
+                <p className="text-sm text-purple-500">Global Tech Enterprise</p>
+              </div>
             </div>
+          )}
+
+          <div className="mt-12 flex justify-center">
+            <Link 
+              href="/recommend" 
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors text-sm font-medium border border-neutral-200 dark:border-neutral-700"
+            >
+              Leave a recommendation
+              <ExternalLink className="w-4 h-4" />
+            </Link>
           </div>
         </motion.div>
       </div>

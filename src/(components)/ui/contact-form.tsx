@@ -196,7 +196,7 @@ export default function ContactForm() {
           ? 'bg-green-500 text-white shadow-[0_0_30px_rgba(34,197,94,0.3)]'
           : isError
             ? 'bg-red-500/80 text-white'
-            : 'bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:shadow-lg hover:shadow-purple-500/25'
+            : 'bg-black/5 dark:bg-white/10 border border-black/10 dark:border-white/20 backdrop-blur-sm hover:bg-black/10 dark:hover:bg-white/20 text-black dark:text-white text-white hover:shadow-lg hover:shadow-purple-500/25'
           } disabled:cursor-not-allowed`}
       >
         {isSubmitting ? (
